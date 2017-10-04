@@ -1,0 +1,25 @@
+%nav.navbar.navbar-expand-md.navbar-dark.bg-dark.navbar-static-top
+  .container
+    %a.navbar-brand{ :href => "#"} MESA Test Hub
+    %button.navbar-toggler{ :type => "button", "data-toggle".to_sym => "collapse", "data-target".to_sym => "#navbarsExampleDefault", "aria-controls".to_sym => "navbarsExampleDefault", "aria-expanded".to_sym => "false", "aria-label".to_sym => "Toggle navigation"}
+      %span.navbar-toggler-icon
+
+    %div.collapse.navbar-collapse#navbarsExampleDefault
+      %ul.navbar-nav.mr-auto
+        %li.nav-item.active
+          %a.nav-link{ :href => '#'} 
+            Home 
+            %span.sr-only (current)
+        %li.nav-item
+          %a.nav-link{ :href => '#' } Link
+        %li.nav-item
+          %a.nav-link.disabled{ :href => '#' } Disabled
+        %li.nav-item.dropdown
+          %a.nav-link.dropdown-togle#dropdown01{ :href => "http://example.com", "data-toggle" => "dropdown", "aria-haspopup" => "true", "aria-expanded" => "false"} Dropdown
+          %div.dropdown-menu{ "aria-labelledby" => "dropdown01"}
+            %a.dropdown-item{ :href => '#' } Action
+            %a.dropdown-item{ :href => '#' } Another action
+            %a.dropdown-item{ :href => '#' } Something else here
+      %form.form-inline.my-2.my-lg-0
+        %input.form-control.mr-sm-2{ :type => "text", :placeholder => "Search", "aria-label" => "Search"}
+        %button.btn.btn-outline-success.my-2.my-sm-0{ :type => "submit"} Search 
