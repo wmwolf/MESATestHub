@@ -1,0 +1,24 @@
+%p#notice= notice
+
+%p
+  %b Name:
+  = @test_datum.name
+%p
+  %b String val:
+  = @test_datum.string_val
+%p
+  %b Float val:
+  = @test_datum.float_val
+%p
+  %b Integer val:
+  = @test_datum.integer_val
+%p
+  %b Boolean val:
+  = @test_datum.boolean_val
+%p
+  %b Instance:
+  = @test_datum.instance
+
+= link_to 'Edit', edit_test_datum_path(@test_datum)
+\|
+= link_to 'Back', test_data_path

@@ -1,0 +1,28 @@
+= form_for @test_datum do |f|
+  - if @test_datum.errors.any?
+    #error_explanation
+      %h2= "#{pluralize(@test_datum.errors.count, "error")} prohibited this test_datum from being saved:"
+      %ul
+        - @test_datum.errors.full_messages.each do |message|
+          %li= message
+
+  .field
+    = f.label :name
+    = f.text_field :name
+  .field
+    = f.label :string_val
+    = f.text_field :string_val
+  .field
+    = f.label :float_val
+    = f.text_field :float_val
+  .field
+    = f.label :integer_val
+    = f.number_field :integer_val
+  .field
+    = f.label :boolean_val
+    = f.check_box :boolean_val
+  .field
+    = f.label :instance
+    = f.text_field :instance
+  .actions
+    = f.submit 'Save'

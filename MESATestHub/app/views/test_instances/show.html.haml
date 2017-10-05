@@ -1,0 +1,36 @@
+%p#notice= notice
+
+%p
+  %b Begin:
+  = @test_instance.begin
+%p
+  %b Finish:
+  = @test_instance.finish
+%p
+  %b Integer:
+  = @test_instance.integer
+%p
+  %b Integer:
+  = @test_instance.integer
+%p
+  %b Integer:
+  = @test_instance.integer
+%p
+  %b String:
+  = @test_instance.string
+%p
+  %b String:
+  = @test_instance.string
+%p
+  %b String:
+  = @test_instance.string
+%p
+  %b Boolean:
+  = @test_instance.boolean
+%p
+  %b Computer:
+  = @test_instance.computer
+
+= link_to 'Edit', edit_test_instance_path(@test_instance)
+\|
+= link_to 'Back', test_instances_path

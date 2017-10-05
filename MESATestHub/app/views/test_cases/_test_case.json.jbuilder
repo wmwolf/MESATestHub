@@ -1,0 +1,2 @@
+json.extract! test_case, :id, :name, :version_added, :description, :last_version_status, :last_test_status, :last_tested, :datum_1_name, :datum_1_type, :datum_2_name, :datum_2_type, :datum_3_name, :datum_3_type, :datum_4_name, :datum_4_type, :datum_5_name, :datum_5_type, :datum_6_name, :datum_6_type, :datum_7_name, :datum_7_type, :datum_8_name, :datum_8_type, :datum_9_name, :datum_9_type, :datum_10_name, :datum_10_type, :created_at, :updated_at
+json.url test_case_url(test_case, format: :json)

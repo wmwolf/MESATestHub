@@ -1,0 +1,39 @@
+%h1 Listing test_instances
+
+%table
+  %thead
+    %tr
+      %th Begin
+      %th Finish
+      %th Integer
+      %th Integer
+      %th Integer
+      %th String
+      %th String
+      %th String
+      %th Boolean
+      %th Computer
+      %th
+      %th
+      %th
+
+  %tbody
+    - @test_instances.each do |test_instance|
+      %tr
+        %td= test_instance.begin
+        %td= test_instance.finish
+        %td= test_instance.integer
+        %td= test_instance.integer
+        %td= test_instance.integer
+        %td= test_instance.string
+        %td= test_instance.string
+        %td= test_instance.string
+        %td= test_instance.boolean
+        %td= test_instance.computer
+        %td= link_to 'Show', test_instance
+        %td= link_to 'Edit', edit_test_instance_path(test_instance)
+        %td= link_to 'Destroy', test_instance, method: :delete, data: { confirm: 'Are you sure?' }
+
+%br
+
+= link_to 'New Test instance', new_test_instance_path

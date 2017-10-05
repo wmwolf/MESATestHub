@@ -1,0 +1,31 @@
+%h1 Listing test_data
+
+%table
+  %thead
+    %tr
+      %th Name
+      %th String val
+      %th Float val
+      %th Integer val
+      %th Boolean val
+      %th Instance
+      %th
+      %th
+      %th
+
+  %tbody
+    - @test_data.each do |test_datum|
+      %tr
+        %td= test_datum.name
+        %td= test_datum.string_val
+        %td= test_datum.float_val
+        %td= test_datum.integer_val
+        %td= test_datum.boolean_val
+        %td= test_datum.instance
+        %td= link_to 'Show', test_datum
+        %td= link_to 'Edit', edit_test_datum_path(test_datum)
+        %td= link_to 'Destroy', test_datum, method: :delete, data: { confirm: 'Are you sure?' }
+
+%br
+
+= link_to 'New Test datum', new_test_datum_path

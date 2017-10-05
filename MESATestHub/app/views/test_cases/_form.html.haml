@@ -1,0 +1,88 @@
+= form_for @test_case do |f|
+  - if @test_case.errors.any?
+    #error_explanation
+      %h2= "#{pluralize(@test_case.errors.count, "error")} prohibited this test_case from being saved:"
+      %ul
+        - @test_case.errors.full_messages.each do |message|
+          %li= message
+
+  .field
+    = f.label :name
+    = f.text_field :name
+  .field
+    = f.label :version_added
+    = f.number_field :version_added
+  .field
+    = f.label :description
+    = f.text_area :description
+  .field
+    = f.label :last_version_status
+    = f.number_field :last_version_status
+  .field
+    = f.label :last_test_status
+    = f.number_field :last_test_status
+  .field
+    = f.label :last_tested
+    = f.datetime_select :last_tested
+  .field
+    = f.label :datum_1_name
+    = f.text_field :datum_1_name
+  .field
+    = f.label :datum_1_type
+    = f.text_field :datum_1_type
+  .field
+    = f.label :datum_2_name
+    = f.text_field :datum_2_name
+  .field
+    = f.label :datum_2_type
+    = f.text_field :datum_2_type
+  .field
+    = f.label :datum_3_name
+    = f.text_field :datum_3_name
+  .field
+    = f.label :datum_3_type
+    = f.text_field :datum_3_type
+  .field
+    = f.label :datum_4_name
+    = f.text_field :datum_4_name
+  .field
+    = f.label :datum_4_type
+    = f.text_field :datum_4_type
+  .field
+    = f.label :datum_5_name
+    = f.text_field :datum_5_name
+  .field
+    = f.label :datum_5_type
+    = f.text_field :datum_5_type
+  .field
+    = f.label :datum_6_name
+    = f.text_field :datum_6_name
+  .field
+    = f.label :datum_6_type
+    = f.text_field :datum_6_type
+  .field
+    = f.label :datum_7_name
+    = f.text_field :datum_7_name
+  .field
+    = f.label :datum_7_type
+    = f.text_field :datum_7_type
+  .field
+    = f.label :datum_8_name
+    = f.text_field :datum_8_name
+  .field
+    = f.label :datum_8_type
+    = f.text_field :datum_8_type
+  .field
+    = f.label :datum_9_name
+    = f.text_field :datum_9_name
+  .field
+    = f.label :datum_9_type
+    = f.text_field :datum_9_type
+  .field
+    = f.label :datum_10_name
+    = f.text_field :datum_10_name
+  .field
+    = f.label :datum_10_type
+    = f.text_field :datum_10_type
+  .actions
+    = f.submit 'Save'

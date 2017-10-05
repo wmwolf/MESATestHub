@@ -1,0 +1,84 @@
+%p#notice= notice
+
+%p
+  %b Name:
+  = @test_case.name
+%p
+  %b Version added:
+  = @test_case.version_added
+%p
+  %b Description:
+  = @test_case.description
+%p
+  %b Last version status:
+  = @test_case.last_version_status
+%p
+  %b Last test status:
+  = @test_case.last_test_status
+%p
+  %b Last tested:
+  = @test_case.last_tested
+%p
+  %b Datum 1 name:
+  = @test_case.datum_1_name
+%p
+  %b Datum 1 type:
+  = @test_case.datum_1_type
+%p
+  %b Datum 2 name:
+  = @test_case.datum_2_name
+%p
+  %b Datum 2 type:
+  = @test_case.datum_2_type
+%p
+  %b Datum 3 name:
+  = @test_case.datum_3_name
+%p
+  %b Datum 3 type:
+  = @test_case.datum_3_type
+%p
+  %b Datum 4 name:
+  = @test_case.datum_4_name
+%p
+  %b Datum 4 type:
+  = @test_case.datum_4_type
+%p
+  %b Datum 5 name:
+  = @test_case.datum_5_name
+%p
+  %b Datum 5 type:
+  = @test_case.datum_5_type
+%p
+  %b Datum 6 name:
+  = @test_case.datum_6_name
+%p
+  %b Datum 6 type:
+  = @test_case.datum_6_type
+%p
+  %b Datum 7 name:
+  = @test_case.datum_7_name
+%p
+  %b Datum 7 type:
+  = @test_case.datum_7_type
+%p
+  %b Datum 8 name:
+  = @test_case.datum_8_name
+%p
+  %b Datum 8 type:
+  = @test_case.datum_8_type
+%p
+  %b Datum 9 name:
+  = @test_case.datum_9_name
+%p
+  %b Datum 9 type:
+  = @test_case.datum_9_type
+%p
+  %b Datum 10 name:
+  = @test_case.datum_10_name
+%p
+  %b Datum 10 type:
+  = @test_case.datum_10_type
+
+= link_to 'Edit', edit_test_case_path(@test_case)
+\|
+= link_to 'Back', test_cases_path
