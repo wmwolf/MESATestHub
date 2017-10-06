@@ -15,6 +15,11 @@ module NavigationHelpers
 
     when /^the home\s?page$/
       '/'
+    when /^the new test case page$/
+      new_test_case_path
+    when /^the test detail page for "([^"]*)"$/
+      page_name =~ /^the test detail page for "([^"]*)"$/
+      test_case_path(TestCase.where(name: $1).first)
 
     # Add more mappings here.
     # Here is an example that pulls values out of the Regexp:

@@ -5,11 +5,39 @@ class TestCasesController < ApplicationController
   # GET /test_cases.json
   def index
     @test_cases = TestCase.all
+    @row_classes = {}
+    @test_cases.each do |t|
+      if t.last_version_status == 0
+        @row_classes[t] = 'table-success'
+      elsif t.last_version_status == 1
+        @row_classes[t] = 'table-danger'
+      else
+        @row_classes[t] = 'table-warning'
+      end
+    end
   end
 
   # GET /test_cases/1
   # GET /test_cases/1.json
   def show
+    # all test instances, sorted by upload date
+    @test_instances = @test_case.test_instances.order(created_at: :desc)
+    @test_instance_classes = {}
+    @test_instances.each do |instance|
+      if instance.passed
+        @test_instance_classes[instance] = 'table-success'
+      else
+        @test_instance_classes[instance] = 'table-danger'
+      end
+    end
+
+    # text and class for last version test status
+    @last_version_status, @last_version_class = passing_status_and_class(
+      @test_case.last_version_status)
+
+    # text and class for last test status
+    @last_test_status, @last_test_class = passing_status_and_class(
+      @test_case.last_test_status)
   end
 
   # GET /test_cases/new
@@ -69,6 +97,24 @@ class TestCasesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def test_case_params
-      params.require(:test_case).permit(:name, :version_added, :description, :last_version_status, :last_test_status, :last_tested, :datum_1_name, :datum_1_type, :datum_2_name, :datum_2_type, :datum_3_name, :datum_3_type, :datum_4_name, :datum_4_type, :datum_5_name, :datum_5_type, :datum_6_name, :datum_6_type, :datum_7_name, :datum_7_type, :datum_8_name, :datum_8_type, :datum_9_name, :datum_9_type, :datum_10_name, :datum_10_type)
+      params.require(:test_case).permit(:name, :version_added, :description, :last_version, :last_version_status, :last_test_status, :last_tested, :datum_1_name, :datum_1_type, :datum_2_name, :datum_2_type, :datum_3_name, :datum_3_type, :datum_4_name, :datum_4_type, :datum_5_name, :datum_5_type, :datum_6_name, :datum_6_type, :datum_7_name, :datum_7_type, :datum_8_name, :datum_8_type, :datum_9_name, :datum_9_type, :datum_10_name, :datum_10_type)
+    end
+
+    # get a bootstrap text class and an appropriate string to convert integer 
+    # passing status to useful web output
+    def passing_status_and_class(status)
+      sts = 'ERROR'
+      cls = 'text-info'
+      if status == 0
+        sts = 'Passing'
+        cls = 'text-success'
+      elsif status == 1
+        sts = 'Failing'
+        cls = 'text-danger'
+      elsif status == 2
+        sts = 'Mixed'
+        cls = 'text-warning'
+      end
+      return sts, cls
     end
 end

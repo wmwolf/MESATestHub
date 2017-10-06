@@ -1,71 +1,43 @@
-%h1 Listing test_cases
+.row.text-center
+  .col
+    %h1 Welcome to MESA Test Hub!
 
-%table
-  %thead
-    %tr
-      %th Name
-      %th Version added
-      %th Description
-      %th Last version status
-      %th Last test status
-      %th Last tested
-      %th Datum 1 name
-      %th Datum 1 type
-      %th Datum 2 name
-      %th Datum 2 type
-      %th Datum 3 name
-      %th Datum 3 type
-      %th Datum 4 name
-      %th Datum 4 type
-      %th Datum 5 name
-      %th Datum 5 type
-      %th Datum 6 name
-      %th Datum 6 type
-      %th Datum 7 name
-      %th Datum 7 type
-      %th Datum 8 name
-      %th Datum 8 type
-      %th Datum 9 name
-      %th Datum 9 type
-      %th Datum 10 name
-      %th Datum 10 type
-      %th
-      %th
-      %th
+.row
+  .col
+    .card-deck
+      .card.border-success
+        .card-body.text-success
+          %h4.card-title Passing
+          %p.card-text
+            All testers report passing on most recent version
+      .card.border-warning
+        .card-body.text-warning
+          %h3.card-title Mixed
+          %p.card-text
+            At least one tester reports failing on most recent version
+      .card.border-danger
+        .card-body.text-danger
+          %h3.card-title Failing
+          %p.card-text
+            All testers report failing on most recent version
 
-  %tbody
-    - @test_cases.each do |test_case|
-      %tr
-        %td= test_case.name
-        %td= test_case.version_added
-        %td= test_case.description
-        %td= test_case.last_version_status
-        %td= test_case.last_test_status
-        %td= test_case.last_tested
-        %td= test_case.datum_1_name
-        %td= test_case.datum_1_type
-        %td= test_case.datum_2_name
-        %td= test_case.datum_2_type
-        %td= test_case.datum_3_name
-        %td= test_case.datum_3_type
-        %td= test_case.datum_4_name
-        %td= test_case.datum_4_type
-        %td= test_case.datum_5_name
-        %td= test_case.datum_5_type
-        %td= test_case.datum_6_name
-        %td= test_case.datum_6_type
-        %td= test_case.datum_7_name
-        %td= test_case.datum_7_type
-        %td= test_case.datum_8_name
-        %td= test_case.datum_8_type
-        %td= test_case.datum_9_name
-        %td= test_case.datum_9_type
-        %td= test_case.datum_10_name
-        %td= test_case.datum_10_type
-        %td= link_to 'Show', test_case
-        %td= link_to 'Edit', edit_test_case_path(test_case)
-        %td= link_to 'Destroy', test_case, method: :delete, data: { confirm: 'Are you sure?' }
+.row
+  .col
+    %table.table.table-hover.table-responsive.table-sm#test_summary
+      %thead.thead-default
+        %tr
+          %th Name
+          %th Last Version Tested
+          %th Last Tested Date
 
-%br
-
-= link_to 'New Test case', new_test_case_path
+      %tbody
+        - @test_cases.each do |test_case|
+          %tr{class: @row_classes[test_case] + ' clickable-row', "data-href":test_case_path(test_case), id: test_case.name + '-row'}
+            %td
+              %samp= test_case.name
+            %td= test_case.last_version
+            %td= test_case.last_tested
+.row
+  .col
+    %a{href: new_test_case_path}
+      %button.btn.btn-secondary Create Test Case

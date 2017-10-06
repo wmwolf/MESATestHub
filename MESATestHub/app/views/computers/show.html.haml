@@ -1,0 +1,21 @@
+%p#notice= notice
+
+%p
+  %b Name:
+  = @computer.name
+%p
+  %b User:
+  = @computer.user
+%p
+  %b Platform:
+  = @computer.platform
+%p
+  %b Processor:
+  = @computer.processor
+%p
+  %b Ram gb:
+  = @computer.ram_gb
+
+= link_to 'Edit', edit_computer_path(@computer)
+\|
+= link_to 'Back', computers_path

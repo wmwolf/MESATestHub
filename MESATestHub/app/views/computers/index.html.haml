@@ -1,0 +1,29 @@
+%h1 Listing computers
+
+%table
+  %thead
+    %tr
+      %th Name
+      %th User
+      %th Platform
+      %th Processor
+      %th Ram gb
+      %th
+      %th
+      %th
+
+  %tbody
+    - @computers.each do |computer|
+      %tr
+        %td= computer.name
+        %td= computer.user
+        %td= computer.platform
+        %td= computer.processor
+        %td= computer.ram_gb
+        %td= link_to 'Show', computer
+        %td= link_to 'Edit', edit_computer_path(computer)
+        %td= link_to 'Destroy', computer, method: :delete, data: { confirm: 'Are you sure?' }
+
+%br
+
+= link_to 'New Computer', new_computer_path

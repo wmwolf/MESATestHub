@@ -1,0 +1,25 @@
+= form_for @computer do |f|
+  - if @computer.errors.any?
+    #error_explanation
+      %h2= "#{pluralize(@computer.errors.count, "error")} prohibited this computer from being saved:"
+      %ul
+        - @computer.errors.full_messages.each do |message|
+          %li= message
+
+  .field
+    = f.label :name
+    = f.text_field :name
+  .field
+    = f.label :user
+    = f.text_field :user
+  .field
+    = f.label :platform
+    = f.text_field :platform
+  .field
+    = f.label :processor
+    = f.text_field :processor
+  .field
+    = f.label :ram_gb
+    = f.number_field :ram_gb
+  .actions
+    = f.submit 'Save'
