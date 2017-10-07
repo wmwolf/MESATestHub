@@ -25,20 +25,26 @@
     %p
       %b Last tested:
       = @test_case.last_tested
+    %p
+      %b Values tracked:
+      = @test_case.data_names.join(", ")
     = link_to 'Edit', edit_test_case_path(@test_case)
     \|
     = link_to 'Back', test_cases_path
   .col-md-8.col-xs-12
-    %table.table.table-hover.table-sm.table-responsive#test-detail
-      %thead.thead-default
-        %tr
-          %th Date Uploaded
-          %th Computer
-          %th Runtime [s]
-      %tbody
-        - @test_instances.each do |instance|
-          %tr{class: @test_instance_classes[instance] + " clickable-row", "data-href": test_instance_path(instance)}
-            %td=instance.created_at
-            %td=instance.computer.name
-            %td=instance.runtime_seconds
+    - if not @test_instances.empty?
+      %table.table.table-hover.table-sm.table-responsive#test-detail
+        %thead.thead-default
+          %tr
+            %th Date Uploaded
+            %th Computer
+            %th Runtime [s]
+        %tbody
+          - @test_instances.each do |instance|
+            %tr{class: @test_instance_classes[instance] + " clickable-row", "data-href": test_case_test_instance_path(@test_case, instance)}
+              %td=instance.created_at
+              %td=instance.computer.name
+              %td=instance.runtime_seconds
+    - else
+      %h4 No tests have been run yet.
 

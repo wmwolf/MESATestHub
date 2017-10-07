@@ -13,6 +13,10 @@ gem 'turbolinks', '~> 5'
 gem 'jbuilder', '~> 2.5'
 group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
+  gem 'guard-bundler'
+  gem 'guard-rails'
+  gem 'guard-rspec'
+  gem 'guard-cucumber'
   gem 'cucumber-rails', require: false
   gem 'cucumber-rails-training-wheels'  
   gem 'capybara', '~> 2.13'
@@ -26,14 +30,12 @@ group :development do
 end
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem 'bootstrap', '~> 4.0.0.beta'
+gem 'bootstrap_form'
 gem 'haml-rails'
 gem 'high_voltage'
 gem 'jquery-rails'
 group :development do
   gem 'better_errors'
-  gem 'guard-bundler'
-  gem 'guard-rails'
-  gem 'guard-rspec'
   gem 'html2haml'
   gem 'rails_layout'
   gem 'rb-fchange', :require=>false

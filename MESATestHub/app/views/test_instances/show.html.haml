@@ -1,36 +1,40 @@
 %p#notice= notice
 
 %p
-  %b Begin:
-  = @test_instance.begin
+  %b Test Case
+  %samp= @test_case.name
 %p
-  %b Finish:
+  %b Time Started:
+  = @test_instance.start
+%p
+  %b Time Finished:
   = @test_instance.finish
 %p
-  %b Integer:
-  = @test_instance.integer
+  %b Runtime:
+  = @test_instance.runtime_seconds
+  seconds
 %p
-  %b Integer:
-  = @test_instance.integer
+  %b MESA Version:
+  = @test_instance.mesa_version
 %p
-  %b Integer:
-  = @test_instance.integer
+  %b Threads:
+  = @test_instance.omp_num_threads
 %p
-  %b String:
-  = @test_instance.string
+  %b Compiler:
+  = @test_instance.compiler
 %p
-  %b String:
-  = @test_instance.string
+  %b Compiler Version:
+  = @test_instance.compiler_version
 %p
-  %b String:
-  = @test_instance.string
+  %b Platform Version:
+  = @test_instance.platform_version
 %p
-  %b Boolean:
-  = @test_instance.boolean
+  %b Result:
+  %span{ class: @passage_class }=@passage_status
 %p
   %b Computer:
-  = @test_instance.computer
+  = link_to @test_instance.computer.name, computer_path(@test_instance.computer)
 
-= link_to 'Edit', edit_test_instance_path(@test_instance)
+= link_to 'Edit', edit_test_case_test_instance_path(@test_case, @test_instance)
 \|
-= link_to 'Back', test_instances_path
+= link_to 'Back', test_case_path(@test_case)

@@ -1,17 +1,17 @@
 %h1 Listing test_instances
 
-%table
-  %thead
+%table.table.table-sm.table-fluid
+  %thead.thead-default
     %tr
-      %th Begin
+      %th Start
       %th Finish
-      %th Integer
-      %th Integer
-      %th Integer
-      %th String
-      %th String
-      %th String
-      %th Boolean
+      %th Runtime [s]
+      %th MESA Version
+      %th Threads
+      %th Compiler
+      %th Compiler Version
+      %th Platform Version
+      %th Status
       %th Computer
       %th
       %th
@@ -20,20 +20,24 @@
   %tbody
     - @test_instances.each do |test_instance|
       %tr
-        %td= test_instance.begin
+        %td= test_instance.start
         %td= test_instance.finish
-        %td= test_instance.integer
-        %td= test_instance.integer
-        %td= test_instance.integer
-        %td= test_instance.string
-        %td= test_instance.string
-        %td= test_instance.string
-        %td= test_instance.boolean
-        %td= test_instance.computer
-        %td= link_to 'Show', test_instance
-        %td= link_to 'Edit', edit_test_instance_path(test_instance)
-        %td= link_to 'Destroy', test_instance, method: :delete, data: { confirm: 'Are you sure?' }
+        %td= test_instance.runtime_seconds
+        %td= test_instance.mesa_version
+        %td= test_instance.omp_num_threads
+        %td= test_instance.compiler
+        %td= test_instance.compiler_version
+        %td= test_instance.platform_version
+        %td
+          -if test_instance.passed
+            %span.text-success Passed
+          -else
+            %span.text-danger Failed
+        %td= test_instance.computer.name
+        %td= link_to 'Show', [ @test_case, test_instance]
+        %td= link_to 'Edit', edit_test_case_test_instance_path(@test_case, test_instance)
+        %td= link_to 'Destroy', [@test_case, test_instance], method: :delete, data: { confirm: 'Are you sure?' }
 
 %br
 
-= link_to 'New Test instance', new_test_instance_path
+= link_to 'New Test instance', new_test_case_test_instance_path

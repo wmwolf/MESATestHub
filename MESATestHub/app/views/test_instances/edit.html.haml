@@ -1,7 +1,9 @@
-%h1 Editing test_instance
+%h1 
+  Editing test instance for 
+  =@test_case.name
 
 = render 'form'
 
-= link_to 'Show', @test_instance
+= link_to 'Show', test_case_test_instance_path([@test_case, @test_instance])
 \|
-= link_to 'Back', test_instances_path
+= link_to 'Back', test_case_test_instances_path([@test_case, @test_instance])

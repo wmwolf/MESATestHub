@@ -1,4 +1,4 @@
-= form_for @test_instance do |f|
+= bootstrap_form_for [@test_case, @test_instance] do |f|
   - if @test_instance.errors.any?
     #error_explanation
       %h2= "#{pluralize(@test_instance.errors.count, "error")} prohibited this test_instance from being saved:"
@@ -6,35 +6,35 @@
         - @test_instance.errors.full_messages.each do |message|
           %li= message
 
-  .field
-    = f.label :begin
-    = f.datetime_select :begin
-  .field
-    = f.label :finish
-    = f.datetime_select :finish
-  .field
-    = f.label :integer
-    = f.text_field :integer
-  .field
-    = f.label :integer
-    = f.text_field :integer
-  .field
-    = f.label :integer
-    = f.text_field :integer
-  .field
-    = f.label :string
-    = f.text_field :string
-  .field
-    = f.label :string
-    = f.text_field :string
-  .field
-    = f.label :string
-    = f.text_field :string
-  .field
-    = f.label :boolean
-    = f.text_field :boolean
-  .field
-    = f.label :computer
-    = f.text_field :computer
+  .form-group
+    .field
+      = f.datetime_select :start, value: nil
+  .form-group
+    .field
+      = f.datetime_select :finish, value: nil
+  .form-group
+    .field
+      = f.number_field :runtime_seconds
+  .form-group
+    .field
+      = f.number_field :mesa_version
+  .form-group
+    .field
+      = f.number_field :omp_num_threads, label: "Number of threads"
+  .form-group
+    .field
+      = f.text_field :compiler, label: "Complier (e.g. ifort or gfortran)"
+  .form-group
+    .field
+      = f.text_field :compiler_version, label: "Compiler version (e.g. 7.0.2)"
+  .form-group
+    .field
+      = f.text_field :platform_version, label: "Platform version (e.g. macOS 10.13 or Ubuntu 16.4"
+  .form-group
+    .field
+      = f.check_box :passed
+  .form-group
+    .field
+      = f.select :computer_id, Computer.all.order(:name). collect { |c| [c.name, c.id] }
   .actions
     = f.submit 'Save'

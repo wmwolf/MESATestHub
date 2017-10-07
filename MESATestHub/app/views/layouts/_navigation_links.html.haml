@@ -6,20 +6,19 @@
 
     %div.collapse.navbar-collapse#navbarsExampleDefault
       %ul.navbar-nav.mr-auto
-        %li.nav-item.active
-          %a.nav-link{ :href => '#'} 
-            Home 
-            %span.sr-only (current)
-        %li.nav-item
-          %a.nav-link{ :href => '#' } Link
-        %li.nav-item
-          %a.nav-link.disabled{ :href => '#' } Disabled
         %li.nav-item.dropdown
-          %a.nav-link.dropdown-togle#dropdown01{ :href => "http://example.com", "data-toggle" => "dropdown", "aria-haspopup" => "true", "aria-expanded" => "false"} Dropdown
+          %a.nav-link.dropdown-togle#dropdown01{ :href => "http://example.com", "data-toggle" => "dropdown", "aria-haspopup" => "true", "aria-expanded" => "false"}
+            Tests
+            %i.fa.fa-chevron-down
           %div.dropdown-menu{ "aria-labelledby" => "dropdown01"}
-            %a.dropdown-item{ :href => '#' } Action
-            %a.dropdown-item{ :href => '#' } Another action
-            %a.dropdown-item{ :href => '#' } Something else here
+            %a.dropdown-item{ href: test_cases_path }
+              %emph All
+            -@all_test_cases.each do |test_case|
+              %a.dropdown-item{ :href => test_case_path(test_case) }
+                =test_case.name
+        %li.nav-item
+          %a.nav-link{ :href => computers_path } Computers
+        
       %form.form-inline.my-2.my-lg-0
         %input.form-control.mr-sm-2{ :type => "text", :placeholder => "Search", "aria-label" => "Search"}
         %button.btn.btn-outline-success.my-2.my-sm-0{ :type => "submit"} Search 
