@@ -11,6 +11,6 @@ Given /^the following computers have been created:$/ do |fields|
 end 
 
 # check number of computers
-Then /^(.*) seed computers should exist/ do |n_test_cases|
+Then /^(.*) seed computers? should exist/ do |n_test_cases|
   expect(Computer.count).to be n_test_cases.to_i
 end

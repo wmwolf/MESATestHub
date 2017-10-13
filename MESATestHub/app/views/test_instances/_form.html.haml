@@ -1,40 +1,55 @@
 = bootstrap_form_for [@test_case, @test_instance] do |f|
-  - if @test_instance.errors.any?
-    #error_explanation
-      %h2= "#{pluralize(@test_instance.errors.count, "error")} prohibited this test_instance from being saved:"
-      %ul
-        - @test_instance.errors.full_messages.each do |message|
-          %li= message
-
-  .form-group
-    .field
-      = f.datetime_select :start, value: nil
-  .form-group
-    .field
-      = f.datetime_select :finish, value: nil
-  .form-group
-    .field
-      = f.number_field :runtime_seconds
-  .form-group
-    .field
-      = f.number_field :mesa_version
-  .form-group
-    .field
-      = f.number_field :omp_num_threads, label: "Number of threads"
-  .form-group
-    .field
-      = f.text_field :compiler, label: "Complier (e.g. ifort or gfortran)"
-  .form-group
-    .field
-      = f.text_field :compiler_version, label: "Compiler version (e.g. 7.0.2)"
-  .form-group
-    .field
-      = f.text_field :platform_version, label: "Platform version (e.g. macOS 10.13 or Ubuntu 16.4"
-  .form-group
-    .field
-      = f.check_box :passed
-  .form-group
-    .field
-      = f.select :computer_id, Computer.all.order(:name). collect { |c| [c.name, c.id] }
-  .actions
-    = f.submit 'Save'
+  - if @test_instance.errors.any?  
+    .form-row
+      .col.alert.alert-danger
+        %h4.alert-heading= "#{pluralize(@test_instance.errors.count, "error")} prohibited this test instance from being saved:"
+        %p
+          %ul
+            - @test_case.errors.full_messages.each do |message|
+              %li= message      
+  .form-row
+    .col.field
+      .card.text-white.bg-primary.mb-3
+        .card-header
+          %h4 Did the test pass?
+        .card-body
+          %p.card-text
+            = f.form_group :passed do
+              =f.radio_button :passed, true, label: "Passed"
+              =f.radio_button :passed, false, label: "Failed"
+  .form-row
+    .col
+      .card-deck
+        .card.text-white.bg-dark.mb-3
+          .card-header
+            %h4 Other required data
+          .card-body
+            .field
+              = f.number_field :runtime_seconds
+            .field
+              = f.number_field :mesa_version
+            .field
+              = f.select :computer_id, Computer.all.order(:name). collect { |c| [c.name, c.id] }
+        .card.text-white.bg-dark.mb-3
+          .card-header
+            %h4 Other useful data
+          .card-body
+            .field
+              = f.number_field :omp_num_threads, label: "Number of threads"
+            .field  
+              = f.select(:compiler, options_for_select([['', nil], ['gfortran', 'gfortran'], ['ifort', 'ifort']]), label: "Compiler")
+  
+  .form-row
+    .col
+      .card.text-white.bg-secondary.mb-3
+        .card-header
+          %h4 Optional Details
+        .card-body
+          .field
+            = f.text_field :platform_version, label: "Platform version (e.g. macOS 10.13 or Ubuntu 16.4"
+          .field
+            = f.text_field :compiler_version, label: "Compiler version (e.g. 7.0.2)"
+  .form-row
+    .col
+      .actions
+        = f.submit 'Save', {class: 'btn btn-lg btn-primary'}

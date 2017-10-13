@@ -2,13 +2,7 @@
 
 %p
   %b Test Case
-  %samp= @test_case.name
-%p
-  %b Time Started:
-  = @test_instance.start
-%p
-  %b Time Finished:
-  = @test_instance.finish
+  %samp= link_to @test_case.name, @test_case
 %p
   %b Runtime:
   = @test_instance.runtime_seconds
@@ -17,23 +11,20 @@
   %b MESA Version:
   = @test_instance.mesa_version
 %p
+  %b Computer:
+  = link_to @test_instance.computer.name, computer_path(@test_instance.computer)
+%p
   %b Threads:
   = @test_instance.omp_num_threads
 %p
   %b Compiler:
-  = @test_instance.compiler
+  = @test_instance.compiler + ' ' + @test_instance.compiler_version
 %p
-  %b Compiler Version:
-  = @test_instance.compiler_version
-%p
-  %b Platform Version:
-  = @test_instance.platform_version
+  %b Platform:
+  = @test_instance.computer.platform + ' ' + @test_instance.platform_version
 %p
   %b Result:
   %span{ class: @passage_class }=@passage_status
-%p
-  %b Computer:
-  = link_to @test_instance.computer.name, computer_path(@test_instance.computer)
 
 = link_to 'Edit', edit_test_case_test_instance_path(@test_case, @test_instance)
 \|

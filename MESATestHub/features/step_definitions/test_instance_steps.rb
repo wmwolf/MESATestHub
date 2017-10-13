@@ -11,8 +11,8 @@ Given /^the following test instances have been created:$/ do |fields|
       t.mesa_version = test[:mesa_version]
       t.passed = test[:passed]
     end
-    test_case = TestCase.where(name: test[:test_name]).first
-    computer = Computer.where(name: test[:computer_name]).first
+    test_case = TestCase.where(name: test[:test_case]).first
+    computer = Computer.where(name: test[:computer]).first
     computer.test_instances << test_instance
     test_case.test_instances << test_instance
     test_instance.save!
@@ -20,6 +20,6 @@ Given /^the following test instances have been created:$/ do |fields|
 end 
 
 # check number of test instances
-Then /^(.*) seed test instances should exist/ do |n_test_cases|
+Then /^(.*) seed test instances? should exist/ do |n_test_cases|
   expect(TestInstance.count).to be n_test_cases.to_i
 end

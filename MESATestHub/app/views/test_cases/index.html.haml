@@ -2,7 +2,7 @@
   .col
     %h1 Welcome to MESA Test Hub!
 
-.row
+.row#index-desc
   .col
     .card-deck
       .card.border-success
@@ -14,7 +14,7 @@
         .card-body.text-warning
           %h3.card-title Mixed
           %p.card-text
-            At least one tester reports failing on most recent version
+            At least one tester reports failing on most recent version or test not run yet.
       .card.border-danger
         .card-body.text-danger
           %h3.card-title Failing
@@ -23,7 +23,7 @@
 
 .row
   .col
-    %table.table.table-hover.table-responsive.table-sm#test_summary
+    %table.table.table-hover.table-responsive#test_summary
       %thead.thead-default
         %tr
           %th Name

@@ -1,25 +1,24 @@
-= form_for @computer do |f|
-  - if @computer.errors.any?
-    #error_explanation
-      %h2= "#{pluralize(@computer.errors.count, "error")} prohibited this computer from being saved:"
-      %ul
-        - @computer.errors.full_messages.each do |message|
-          %li= message
-
-  .field
-    = f.label :name
-    = f.text_field :name
-  .field
-    = f.label :user
-    = f.text_field :user
-  .field
-    = f.label :platform
-    = f.text_field :platform
-  .field
-    = f.label :processor
-    = f.text_field :processor
-  .field
-    = f.label :ram_gb
-    = f.number_field :ram_gb
-  .actions
-    = f.submit 'Save'
+= bootstrap_form_for @computer do |f|
+  - if @computer.errors.any?  
+    .form-row
+      .col.alert.alert-danger
+        %h4.alert-heading= "#{pluralize(@computer.errors.count, "error")} prohibited this test instance from being saved:"
+        %p
+          %ul
+            - @computer.errors.full_messages.each do |message|
+              %li= message
+  .form-row
+    .col.field
+      = f.text_field :name, placeholder: "Compy 5000"
+    .col.field
+      = f.text_field :user, placeholder: "Bill Paxton"
+  .form-row
+    .col.field
+      = f.text_field :platform, placeholder: "macOS"
+    .col.field
+      = f.text_field :processor, placeholder: "2.7 GHz 12-Core Intel Xeon E5"
+    .col.field
+      = f.number_field :ram_gb, placeholder: 16
+  .form-row
+    .actions
+      = f.submit 'Save', class: 'btn btn-primary btn-lg'

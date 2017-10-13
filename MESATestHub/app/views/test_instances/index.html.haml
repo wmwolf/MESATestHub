@@ -3,14 +3,12 @@
 %table.table.table-sm.table-fluid
   %thead.thead-default
     %tr
-      %th Start
-      %th Finish
       %th Runtime [s]
       %th MESA Version
       %th Threads
       %th Compiler
-      %th Compiler Version
-      %th Platform Version
+      %th Version
+      %th Platform
       %th Status
       %th Computer
       %th
@@ -20,14 +18,12 @@
   %tbody
     - @test_instances.each do |test_instance|
       %tr
-        %td= test_instance.start
-        %td= test_instance.finish
         %td= test_instance.runtime_seconds
         %td= test_instance.mesa_version
         %td= test_instance.omp_num_threads
         %td= test_instance.compiler
         %td= test_instance.compiler_version
-        %td= test_instance.platform_version
+        %td= test_instance.computer.platform + ' ' + test_instance.platform_version
         %td
           -if test_instance.passed
             %span.text-success Passed

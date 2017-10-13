@@ -1,4 +1,4 @@
-class CreateTestData < ActiveRecord::Migration[5.1]
+class CreateTestDatum < ActiveRecord::Migration[5.1]
   def change
     create_table :test_data do |t|
       t.string :name, null:false
@@ -6,7 +6,7 @@ class CreateTestData < ActiveRecord::Migration[5.1]
       t.float :float_val
       t.integer :integer_val
       t.boolean :boolean_val
-      t.references :instance, foreign_key: true, null: false
+      t.references :test_instance, foreign_key: true, null: false
 
       t.timestamps
     end

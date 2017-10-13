@@ -1,4 +1,4 @@
-class CreateComputers < ActiveRecord::Migration[5.1]
+class CreateComputer < ActiveRecord::Migration[5.1]
   def change
     create_table :computers do |t|
       t.string :name, null: false
@@ -8,7 +8,7 @@ class CreateComputers < ActiveRecord::Migration[5.1]
       t.string :processor
       t.integer :ram_gb
 
-      t.timestamps
+      t.timestamps      
     end
   end
 end

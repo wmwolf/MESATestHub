@@ -1,4 +1,4 @@
-class CreateTestInstances < ActiveRecord::Migration[5.1]
+class CreateTestInstance < ActiveRecord::Migration[5.1]
   def change
     create_table :test_instances do |t|
       t.datetime :start

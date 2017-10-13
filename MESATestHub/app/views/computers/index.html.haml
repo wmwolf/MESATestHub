@@ -1,13 +1,13 @@
-%h1 Listing computers
+%h1 Computers
 
-%table
-  %thead
+%table.table
+  %thead.thead-default
     %tr
       %th Name
       %th User
       %th Platform
       %th Processor
-      %th Ram gb
+      %th Ram [GB]
       %th
       %th
       %th
@@ -26,4 +26,4 @@
 
 %br
 
-= link_to 'New Computer', new_computer_path
+= link_to 'New Computer', new_computer_path, class: 'btn btn-primary btn-lg text-light'

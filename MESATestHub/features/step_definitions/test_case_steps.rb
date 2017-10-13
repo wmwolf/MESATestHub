@@ -11,7 +11,7 @@ Given /^the following test cases have been created:$/ do |fields|
 end 
 
 # double checking the table population step
-Then /^(.*) seed test cases should exist/ do |n_test_cases|
+Then /^(.*) seed test cases? should exist/ do |n_test_cases|
   expect(TestCase.count).to be n_test_cases.to_i
 end
 

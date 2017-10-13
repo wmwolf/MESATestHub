@@ -1,12 +1,9 @@
-class CreateTestCases < ActiveRecord::Migration[5.1]
+class CreateTestCase < ActiveRecord::Migration[5.1]
   def change
     create_table :test_cases do |t|
       t.string :name, null: false
       t.integer :version_added
       t.text :description
-      t.integer :last_version_status
-      t.integer :last_test_status
-      t.datetime :last_tested
       t.string :datum_1_name
       t.string :datum_1_type
       t.string :datum_2_name

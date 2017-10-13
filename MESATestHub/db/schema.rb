@@ -10,7 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171005231434) do
+ActiveRecord::Schema.define(version: 20171012225322) do
+
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
 
   create_table "computers", force: :cascade do |t|
     t.string "name", null: false
@@ -27,9 +30,6 @@ ActiveRecord::Schema.define(version: 20171005231434) do
     t.string "name", null: false
     t.integer "version_added"
     t.text "description"
-    t.integer "last_version_status"
-    t.integer "last_test_status"
-    t.datetime "last_tested"
     t.string "datum_1_name"
     t.string "datum_1_type"
     t.string "datum_2_name"
@@ -52,7 +52,6 @@ ActiveRecord::Schema.define(version: 20171005231434) do
     t.string "datum_10_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "last_version"
   end
 
   create_table "test_data", force: :cascade do |t|
@@ -61,15 +60,13 @@ ActiveRecord::Schema.define(version: 20171005231434) do
     t.float "float_val"
     t.integer "integer_val"
     t.boolean "boolean_val"
-    t.integer "instance_id", null: false
+    t.bigint "test_instance_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["instance_id"], name: "index_test_data_on_instance_id"
+    t.index ["test_instance_id"], name: "index_test_data_on_test_instance_id"
   end
 
   create_table "test_instances", force: :cascade do |t|
-    t.datetime "start"
-    t.datetime "finish"
     t.integer "runtime_seconds", null: false
     t.integer "mesa_version", null: false
     t.integer "omp_num_threads"
@@ -77,12 +74,15 @@ ActiveRecord::Schema.define(version: 20171005231434) do
     t.string "compiler_version"
     t.string "platform_version"
     t.boolean "passed", null: false
-    t.integer "computer_id", null: false
-    t.integer "test_case_id", null: false
+    t.bigint "computer_id", null: false
+    t.bigint "test_case_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["computer_id"], name: "index_test_instances_on_computer_id"
     t.index ["test_case_id"], name: "index_test_instances_on_test_case_id"
   end
 
+  add_foreign_key "test_data", "test_instances"
+  add_foreign_key "test_instances", "computers"
+  add_foreign_key "test_instances", "test_cases"
 end

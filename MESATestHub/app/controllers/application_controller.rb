@@ -4,6 +4,6 @@ class ApplicationController < ActionController::Base
 
   # so that the menubar in every page can access the test case inventory
   def set_all_test_cases
-    @all_test_cases = TestCase.order(name: :desc)
+    @all_test_cases = TestCase.order(name: :asc)
   end
 end

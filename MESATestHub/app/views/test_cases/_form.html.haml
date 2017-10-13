@@ -1,91 +1,70 @@
-= form_for @test_case do |f|
+= bootstrap_form_for @test_case, inline_errors: false do |f|
   - if @test_case.errors.any?
-    #error_explanation
-      %h2= "#{pluralize(@test_case.errors.count, "error")} prohibited this test_case from being saved:"
-      %ul
-        - @test_case.errors.full_messages.each do |message|
-          %li= message
-
-  .field
-    = f.label :name
-    = f.text_field :name
-  .field
-    = f.label :version_added
-    = f.number_field :version_added
-  .field
-    = f.label :description
-    = f.text_area :description
-  .field
-    = f.label :last_version
-    = f.number_field :last_version
-  .field
-    = f.label :last_version_status
-    = f.number_field :last_version_status
-  .field
-    = f.label :last_test_status
-    = f.number_field :last_test_status
-  .field
-    = f.label :last_tested
-    = f.datetime_select :last_tested
-  .field
-    = f.label :datum_1_name
-    = f.text_field :datum_1_name
-  .field
-    = f.label :datum_1_type
-    = f.text_field :datum_1_type
-  .field
-    = f.label :datum_2_name
-    = f.text_field :datum_2_name
-  .field
-    = f.label :datum_2_type
-    = f.text_field :datum_2_type
-  .field
-    = f.label :datum_3_name
-    = f.text_field :datum_3_name
-  .field
-    = f.label :datum_3_type
-    = f.text_field :datum_3_type
-  .field
-    = f.label :datum_4_name
-    = f.text_field :datum_4_name
-  .field
-    = f.label :datum_4_type
-    = f.text_field :datum_4_type
-  .field
-    = f.label :datum_5_name
-    = f.text_field :datum_5_name
-  .field
-    = f.label :datum_5_type
-    = f.text_field :datum_5_type
-  .field
-    = f.label :datum_6_name
-    = f.text_field :datum_6_name
-  .field
-    = f.label :datum_6_type
-    = f.text_field :datum_6_type
-  .field
-    = f.label :datum_7_name
-    = f.text_field :datum_7_name
-  .field
-    = f.label :datum_7_type
-    = f.text_field :datum_7_type
-  .field
-    = f.label :datum_8_name
-    = f.text_field :datum_8_name
-  .field
-    = f.label :datum_8_type
-    = f.text_field :datum_8_type
-  .field
-    = f.label :datum_9_name
-    = f.text_field :datum_9_name
-  .field
-    = f.label :datum_9_type
-    = f.text_field :datum_9_type
-  .field
-    = f.label :datum_10_name
-    = f.text_field :datum_10_name
-  .field
-    = f.label :datum_10_type
-    = f.text_field :datum_10_type
+    .form-row
+      .col.alert.alert-danger
+        %h4.alert-heading= "#{pluralize(@test_case.errors.count, "error")} prohibited this test case from being saved:"
+        %p
+          %ul
+            - @test_case.errors.full_messages.each do |message|
+              %li= message      
+  .form-row
+    .col.field
+      = f.text_field :name, placeholder: 'wd2'
+    .col.field
+      = f.number_field :version_added, placeholder: 10000
+  .form-row
+    .col.field
+      = f.text_area :description, placeholder: 'description of what the test does'
+      %small.form-text.text-muted What does the test do? Describe the physical situation at hand (i.e. an accreting white dwarf) and what constitutes "success" (i.e. it undergoes several flashes and then settles into stable burning).
+  .form-row
+    .col.field
+      = f.text_field :datum_1_name, placeholder: 'name of additional data to be tracked'
+    .col.field
+      = f.select(:datum_1_type, options_for_select([['', nil], ['string', 'string'], ['float', 'float'], ['integer', 'integer'], ['boolean', 'boolean']]))
+  .form-row
+    .col.field
+      = f.text_field :datum_2_name, placeholder: 'name of additional data to be tracked'
+    .col.field
+      = f.select(:datum_2_type, options_for_select([['', nil], ['string', 'string'], ['float', 'float'], ['integer', 'integer'], ['boolean', 'boolean']]))
+  .form-row
+    .col.field
+      = f.text_field :datum_3_name, placeholder: 'name of additional data to be tracked'
+    .col.field
+      = f.select(:datum_3_type, options_for_select([['', nil], ['string', 'string'], ['float', 'float'], ['integer', 'integer'], ['boolean', 'boolean']]))
+  .form-row
+    .col.field
+      = f.text_field :datum_4_name, placeholder: 'name of additional data to be tracked'
+    .col.field
+      = f.select(:datum_4_type, options_for_select([['', nil], ['string', 'string'], ['float', 'float'], ['integer', 'integer'], ['boolean', 'boolean']]))
+  .form-row
+    .col.field
+      = f.text_field :datum_5_name, placeholder: 'name of additional data to be tracked'
+    .col.field
+      = f.select(:datum_5_type, options_for_select([['', nil], ['string', 'string'], ['float', 'float'], ['integer', 'integer'], ['boolean', 'boolean']]))
+  .form-row
+    .col.field
+      = f.text_field :datum_6_name, placeholder: 'name of additional data to be tracked'
+    .col.field
+      = f.select(:datum_6_type, options_for_select([['', nil], ['string', 'string'], ['float', 'float'], ['integer', 'integer'], ['boolean', 'boolean']]))
+  .form-row
+    .col.field
+      = f.text_field :datum_7_name, placeholder: 'name of additional data to be tracked'
+    .col.field
+      = f.select(:datum_7_type, options_for_select([['', nil], ['string', 'string'], ['float', 'float'], ['integer', 'integer'], ['boolean', 'boolean']]))
+  .form-row
+    .col.field
+      = f.text_field :datum_8_name, placeholder: 'name of additional data to be tracked'
+    .col.field
+      = f.select(:datum_8_type, options_for_select([['', nil], ['string', 'string'], ['float', 'float'], ['integer', 'integer'], ['boolean', 'boolean']]))
+  .form-row
+    .col.field
+      = f.text_field :datum_9_name, placeholder: 'name of additional data to be tracked'
+    .col.field
+      = f.select(:datum_9_type, options_for_select([['', nil], ['string', 'string'], ['float', 'float'], ['integer', 'integer'], ['boolean', 'boolean']]))
+  .form-row
+    .col.field
+      = f.text_field :datum_10_name, placeholder: 'name of additional data to be tracked'
+    .col.field
+      = f.select(:datum_10_type, options_for_select([['', nil], ['string', 'string'], ['float', 'float'], ['integer', 'integer'], ['boolean', 'boolean']]))
   .actions
-    = f.submit 'Save'
+    = f.submit 'Save', {class: "btn btn-lg btn-primary"}

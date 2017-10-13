@@ -1,6 +1,20 @@
 class TestCase < ApplicationRecord
-  has_many :test_instances, after_add: :update_test_status
+  has_many :test_instances, dependent: :destroy
   has_many :computers, through: :test_instances
+
+  validates_presence_of :name
+  validates_uniqueness_of :name
+
+  validates_inclusion_of :datum_1_type, in: ['integer', 'float', 'string', 'boolean'], allow_blank: true
+  validates_inclusion_of :datum_2_type, in: ['integer', 'float', 'string', 'boolean'], allow_blank: true
+  validates_inclusion_of :datum_3_type, in: ['integer', 'float', 'string', 'boolean'], allow_blank: true
+  validates_inclusion_of :datum_4_type, in: ['integer', 'float', 'string', 'boolean'], allow_blank: true
+  validates_inclusion_of :datum_5_type, in: ['integer', 'float', 'string', 'boolean'], allow_blank: true
+  validates_inclusion_of :datum_6_type, in: ['integer', 'float', 'string', 'boolean'], allow_blank: true
+  validates_inclusion_of :datum_7_type, in: ['integer', 'float', 'string', 'boolean'], allow_blank: true
+  validates_inclusion_of :datum_8_type, in: ['integer', 'float', 'string', 'boolean'], allow_blank: true
+  validates_inclusion_of :datum_9_type, in: ['integer', 'float', 'string', 'boolean'], allow_blank: true
+  validates_inclusion_of :datum_10_type, in: ['integer', 'float', 'string', 'boolean'], allow_blank: true
 
   # this is ugly and hard-codey, but what're ya gonna do?
   def data_names
@@ -15,7 +29,6 @@ class TestCase < ApplicationRecord
      datum_10_type].reject { |type| type.nil? or type.strip.empty? }
   end
 
-
   # assumes the user put in matching data names and types (i.e. datum_1_name
   # ALWAYS has a corresponding datum_1_type and there are no orphans). This
   # should be handled by a validation
@@ -24,58 +37,31 @@ class TestCase < ApplicationRecord
     return Hash[data_names.zip data_types][data_name]
   end
 
-  def current_last_tested
+  def last_tested
     test_instances.maximum(:created_at)
   end
 
+  alias :last_tested_date :last_tested
 
-  def update_test_status(test_instance)
-
-    # easily refer to the test case that just had a test instance added
-    test_case = test_instance.test_case
-
-    # update the last tested date to the most recent test (may not be this
-    # one if it is added after the fact)
-    if not test_instance.created_at.nil?
-      if test_case.current_last_tested.nil?
-        test_case.last_tested = test_instance.created_at
-      else
-        test_case.last_tested = [test_instance.created_at,
-         test_case.current_last_tested].maximum
-      end
-    end
-    # test_case.last_tested = TestInstance.where(test_case_id: test_case.id).maximum(:created_at)
-    # test_case.last_tested ||= test_case.test_instances.maximum("created_at").created_at
-    # test_case.last_tested = TestInstance.first.created_at
-
-    # set the last test result
-    test_case.last_test_status = test_instance.passed ? 0 : 1
-
-    if not test_instance.mesa_version.nil?
-      if test_instance.mesa_version == test_case.last_version
-        # new test of the most current version; update passage status
-        if test_case.last_version_status == 0
-          # all previous tests passed (status 0), so if this passes, keep it
-          # at passing. Otherwise switch to mixed (status 2)
-          test_case.last_version_status = 2 unless test_instance.passed
-
-        elsif test_case.last_version_status == 1
-          # all previous tests failed (status 1), so if this fails, keep it
-          # at failing. Otherwise, switch to mixed (status 2)
-          test_case.last_version_status = 2 if test_instance.passed
-        end
-
-      elsif test_case.last_version.nil? or 
-        test_case.last_version < test_instance.mesa_version
-        # this is the first test of this newest version, update the last
-        # version
-        test_case.last_version = test_instance.mesa_version
-        # update passage status to passing or failing since this is the
-        # first test of this version
-        test_case.last_version_status = test_instance.passed ? 0 : 1
-      end        
-    end
-    test_case.save
+  def last_test_status
+    return 3 if test_instances.empty?
+    test_instances.where(created_at: last_tested_date).first.passed ? 0 : 1
   end
 
+  def last_version
+    test_instances.maximum(:mesa_version)
+  end
+
+  def last_version_status
+    return 3 if test_instances.empty?
+    failing = test_instances.where(mesa_version: last_version, passed: false)
+    passing = test_instances.where(mesa_version: last_version, passed: true)
+    if failing.count > 0
+      # both counts > 1, mixed (2). Only failing > 1, failing (1)
+      passing.count > 0 ? 2 : 1
+    else
+      # passing status
+      return 0
+    end
+  end
 end

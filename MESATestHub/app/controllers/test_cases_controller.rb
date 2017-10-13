@@ -4,7 +4,7 @@ class TestCasesController < ApplicationController
   # GET /test_cases
   # GET /test_cases.json
   def index
-    @test_cases = TestCase.order(name: :desc)
+    @test_cases = TestCase.order(name: :asc)
     @row_classes = {}
     @test_cases.each do |t|
       if t.last_version_status == 0
@@ -21,7 +21,7 @@ class TestCasesController < ApplicationController
   # GET /test_cases/1.json
   def show
     # all test instances, sorted by upload date
-    @test_instances = @test_case.test_instances.order(created_at: :desc)
+    @test_instances = @test_case.test_instances.where(mesa_version: @test_case.last_version).order(created_at: :desc)
     @test_instance_classes = {}
     @test_instances.each do |instance|
       if instance.passed
@@ -102,6 +102,7 @@ class TestCasesController < ApplicationController
 
     # get a bootstrap text class and an appropriate string to convert integer 
     # passing status to useful web output
+
     def passing_status_and_class(status)
       sts = 'ERROR'
       cls = 'text-info'
@@ -113,6 +114,9 @@ class TestCasesController < ApplicationController
         cls = 'text-danger'
       elsif status == 2
         sts = 'Mixed'
+        cls = 'text-warning'
+      elsif status == 3
+        sts = 'Not yet run'
         cls = 'text-warning'
       end
       return sts, cls

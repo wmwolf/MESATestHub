@@ -5,7 +5,7 @@ class TestInstancesController < ApplicationController
   # GET /test_instances
   # GET /test_instances.json
   def index
-    @test_instances = @test_case.test_instances
+    @test_instances = @test_case.test_instances.order(mesa_version: :desc, created_at: :desc)
   end
 
   # GET /test_instances/1
