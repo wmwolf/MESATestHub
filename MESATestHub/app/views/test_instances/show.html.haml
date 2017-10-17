@@ -18,13 +18,23 @@
   = @test_instance.omp_num_threads
 %p
   %b Compiler:
-  = @test_instance.compiler + ' ' + @test_instance.compiler_version
+  - if @test_instance.compiler.nil? 
+    =''
+  - else
+    =(@test_instance.compiler + ' ' + (@test_instance.compiler_version || '')).strip
 %p
   %b Platform:
-  = @test_instance.computer.platform + ' ' + @test_instance.platform_version
+  - if @test_instance.computer.platform.nil?
+    =''
+  - else
+    = (@test_instance.computer.platform + ' ' + (@test_instance.platform_version || '')).strip
 %p
   %b Result:
   %span{ class: @passage_class }=@passage_status
+- @test_instance.test_data.each do |test_data|
+  %p
+    %b=test_data.name + ':'
+    =test_data.value
 
 = link_to 'Edit', edit_test_case_test_instance_path(@test_case, @test_instance)
 \|

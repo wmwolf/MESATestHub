@@ -15,4 +15,29 @@ class TestDatum < ApplicationRecord
         "Available data names are: " + test_case.data_names.join(', ') + '.')
     end
   end
+
+  def value
+    case test_instance.test_case.data_type(name)
+    when 'integer' then integer_val
+    when 'float' then float_val
+    when 'string' then string_val
+    when 'boolean' then boolean_val
+    end
+  end
+
+  def value=(new_val)
+    case test_instance.test_case.data_type(name)
+    when 'integer' then self.integer_val = new_val
+    when 'float' then self.float_val = new_val
+    when 'string' then self.string_val = new_val
+    when 'boolean' then self.boolean_val = new_val
+    # desperate debugging, delete this whole block
+    else
+      integer_val = new_val
+      float_val = new_val
+      string_val = new_val
+      boolean_val = new_val
+    end
+  end   
+
 end

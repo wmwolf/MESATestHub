@@ -7,7 +7,6 @@
       %th MESA Version
       %th Threads
       %th Compiler
-      %th Version
       %th Platform
       %th Status
       %th Computer
@@ -21,9 +20,8 @@
         %td= test_instance.runtime_seconds
         %td= test_instance.mesa_version
         %td= test_instance.omp_num_threads
-        %td= test_instance.compiler
-        %td= test_instance.compiler_version
-        %td= test_instance.computer.platform + ' ' + test_instance.platform_version
+        %td= ((test_instance.compiler || '') + ' ' + (test_instance.compiler_version || '')).strip
+        %td= ((test_instance.computer.platform || '' ) + ' ' + (test_instance.platform_version || '')).strip
         %td
           -if test_instance.passed
             %span.text-success Passed

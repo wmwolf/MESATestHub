@@ -1,6 +1,7 @@
 class TestInstancesController < ApplicationController
-  before_action :get_test_case
+  before_action :get_test_case, except: [:submit]
   before_action :set_test_instance, only: [:show, :edit, :update, :destroy]
+  skip_before_action :verify_authenticity_token, only: [:submit]
 
   # GET /test_instances
   # GET /test_instances.json
@@ -24,6 +25,35 @@ class TestInstancesController < ApplicationController
   # GET /test_instances/1/edit
   def edit
   end
+
+  # POST /test_instances/submit
+  # POST /test_instances/submit.json
+  def submit
+    # find the appropriate test_case and computer
+    @test_case = TestCase.where(name: params[:test_case]).first
+    @computer = Computer.where(name: params[:computer]).first
+
+    @test_instance = TestInstance.new(submission_instance_params)
+    @test_instance.test_case_id = @test_case.id
+    @test_instance.computer_id = @computer.id
+
+
+    respond_to do |format|
+      if @test_instance.save
+        data_params.each do |data_name, data_val|
+          datum = @test_instance.test_data.build(name: data_name)
+          datum.value = data_val
+          datum.save!
+        end
+        format.html { redirect_to test_case_test_instances_url(@test_case), notice: 'Test instance was successfully created.' }
+        format.json { render :show, status: :created, location: @test_instance }
+      else
+        format.html { render :new }
+        format.json { render json: @test_instance.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
 
   # POST /test_instances
   # POST /test_instances.json
@@ -78,8 +108,43 @@ class TestInstancesController < ApplicationController
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
+
+
+    # these are params used in submission that are NOT used for creating the
+    # instance itself. :test_case and :computer are used for discerning foreign
+    # keys, but do not go into the actual build command. The data names are
+    # used for creating asscoicated test_data objects.
+    def submission_bonus_keys
+      [:test_case, :computer, *@test_case.data_names.map { |key| key.to_sym }]
+    end
+
+    # allowed params for using the submit controller action
+    def submission_params
+      params.permit(:runtime_seconds, :mesa_version, :omp_num_threads,
+        :compiler, :compiler_version, :platform_version, :passed,
+        *submission_bonus_keys)
+    end
+
+    # once we're in submit, these are the params used to build the new instance
+    def submission_instance_params
+      new_hash = {}
+      submission_params.keys.each do |key|
+        unless submission_bonus_keys.include? key.to_sym
+          new_hash[key] = submission_params[key]
+        end
+      end
+      new_hash
+    end
+
+    def data_params
+      submission_params.select do |key, value| 
+        @test_case.data_names.include? key.to_s
+      end
+    end
+
+    # for traditional update/created process
     def test_instance_params
-      params.require(:test_instance).permit(:begin, :finish, :runtime_seconds, 
+      params.require(:test_instance).permit(:runtime_seconds, 
         :mesa_version, :omp_num_threads, :compiler, :compiler_version,
         :platform_version, :passed, :computer_id, :test_case_id)
     end

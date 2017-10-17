@@ -6,4 +6,7 @@ Rails.application.routes.draw do
 
   root to: 'test_cases#index'
 
+  # meant for remote HTTP requests
+  post '/test_instances/submit', to: 'test_instances#submit'
+
 end
