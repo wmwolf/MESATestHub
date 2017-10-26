@@ -3,6 +3,10 @@ class TestInstancesController < ApplicationController
   before_action :set_test_instance, only: [:show, :edit, :update, :destroy]
   skip_before_action :verify_authenticity_token, only: [:submit]
 
+  # note that submit does some fancy footwork on the fly
+  before_action :authorize_self_or_admin, only: [:edit, :update, :destroy]
+  before_action :authorize_user, only: [:new, :create]
+
   # GET /test_instances
   # GET /test_instances.json
   def index
@@ -30,23 +34,21 @@ class TestInstancesController < ApplicationController
   # POST /test_instances/submit.json
   def submit
     # find the appropriate test_case and computer
-    @test_case = TestCase.where(name: params[:test_case]).first
-    @computer = Computer.where(name: params[:computer]).first
 
     @test_instance = TestInstance.new(submission_instance_params)
-    @test_instance.test_case_id = @test_case.id
-    @test_instance.computer_id = @computer.id
-
+    @test_instance.set_test_case_name(params[:test_case])
+    @test_instance.set_computer_name(params[:computer])
 
     respond_to do |format|
       if @test_instance.save
+        @test_case = @test_instance.test_case
         data_params.each do |data_name, data_val|
           datum = @test_instance.test_data.build(name: data_name)
           datum.value = data_val
           datum.save!
         end
         format.html { redirect_to test_case_test_instances_url(@test_case), notice: 'Test instance was successfully created.' }
-        format.json { render :show, status: :created, location: @test_instance }
+        format.json { render :show, status: :created, location: test_case_test_instance_path(@test_case, @test_instance) }
       else
         format.html { render :new }
         format.json { render json: @test_instance.errors, status: :unprocessable_entity }
@@ -115,7 +117,13 @@ class TestInstancesController < ApplicationController
     # keys, but do not go into the actual build command. The data names are
     # used for creating asscoicated test_data objects.
     def submission_bonus_keys
-      [:test_case, :computer, *@test_case.data_names.map { |key| key.to_sym }]
+      [:email, :password, :test_case, :computer, 
+        *@test_case.data_names.map { |key| key.to_sym }]
+    end
+
+    def instance_keys
+      [:runtime_seconds, :mesa_version, :omp_num_threads, :compiler,
+        :compiler_version, :platform_version, :passed]
     end
 
     # allowed params for using the submit controller action
@@ -128,10 +136,8 @@ class TestInstancesController < ApplicationController
     # once we're in submit, these are the params used to build the new instance
     def submission_instance_params
       new_hash = {}
-      submission_params.keys.each do |key|
-        unless submission_bonus_keys.include? key.to_sym
-          new_hash[key] = submission_params[key]
-        end
+      instance_keys.each do |key|
+        new_hash[key] = params[key] if params[key]
       end
       new_hash
     end
@@ -148,4 +154,12 @@ class TestInstancesController < ApplicationController
         :mesa_version, :omp_num_threads, :compiler, :compiler_version,
         :platform_version, :passed, :computer_id, :test_case_id)
     end
+
+    def authorize_self_or_admin
+      unless admin? or @user.id == current_user.id
+        redirect_to login_url, alert: "Must be an admin or the user in " +
+        "question to do that action."
+      end
+    end
+
 end

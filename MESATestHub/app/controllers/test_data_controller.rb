@@ -1,5 +1,11 @@
 class TestDataController < ApplicationController
+
+  # this whole controller should be pretty worthless since there are no
+  # routes to these resources. Yay!
+  
   before_action :set_test_datum, only: [:show, :edit, :update, :destroy]
+
+  before_action :authorize_self_or_admin, only: [:edit, :update, :destroy]
 
   # GET /test_data
   # GET /test_data.json
@@ -70,5 +76,15 @@ class TestDataController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def test_datum_params
       params.require(:test_datum).permit(:name, :string_val, :float_val, :integer_val, :boolean_val, :instance)
+    end
+
+    def set_user
+      @user ||= @test_datum.test_instance.computer.user
+
+    def authorize_self_or_admin
+      unless admin? or @user.id == current_user.id
+        redirect_to login_url, alert: "Must be an admin or the user in " +
+        "question to do that action."
+      end
     end
 end

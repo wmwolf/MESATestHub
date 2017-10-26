@@ -1,0 +1,21 @@
+.row
+  .col
+    %h1
+      =@user.name
+      Details
+
+.row
+  .col
+    %p
+      %b Name
+      =@user.name
+    %p
+      %b Email
+      =@user.email
+    %p
+      %b Computers
+      %ul
+        -@user.computers.each do |comp|
+          %li=link_to comp.name, comp
+
+

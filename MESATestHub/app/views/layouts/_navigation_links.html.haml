@@ -1,24 +1,43 @@
-%nav.navbar.navbar-expand-md.navbar-dark.bg-dark.navbar-static-top
+%nav.navbar.navbar-expand-md.navbar-dark.bg-dark.navbar-static-top.justify-content-between
   .container
-    %a.navbar-brand{ :href => root_path} MESA Test Hub
-    %button.navbar-toggler{ :type => "button", "data-toggle".to_sym => "collapse", "data-target".to_sym => "#navbarsExampleDefault", "aria-controls".to_sym => "navbarsExampleDefault", "aria-expanded".to_sym => "false", "aria-label".to_sym => "Toggle navigation"}
+    %a.navbar-brand{ :href => root_path } MESA Test Hub
+    %button.navbar-toggler{ :type => "button", "data-toggle".to_sym => "collapse", "data-target".to_sym => "#main-navbar", "aria-controls".to_sym => "main-navbar", "aria-expanded".to_sym => "false", "aria-label".to_sym => "Toggle navigation"}
       %span.navbar-toggler-icon
 
-    %div.collapse.navbar-collapse#navbarsExampleDefault
+    .collapse.navbar-collapse#main-navbar
       %ul.navbar-nav.mr-auto
         %li.nav-item.dropdown
-          %a.nav-link.dropdown-togle#dropdown01{ :href => "http://example.com", "data-toggle" => "dropdown", "aria-haspopup" => "true", "aria-expanded" => "false"}
+          %a.nav-link.dropdown-togle#dropdown01{ :href => test_cases_path, "data-toggle" => "dropdown", "aria-haspopup" => "true", "aria-expanded" => "false"}
             Tests
             %i.fa.fa-chevron-down
           %div.dropdown-menu{ "aria-labelledby" => "dropdown01"}
             %a.dropdown-item{ href: test_cases_path }
-              %emph All
+              %strong All
             -@all_test_cases.each do |test_case|
               %a.dropdown-item{ :href => test_case_path(test_case) }
                 =test_case.name
-        %li.nav-item
-          %a.nav-link{ :href => computers_path } Computers
-        
-      %form.form-inline.my-2.my-lg-0
-        %input.form-control.mr-sm-2{ :type => "text", :placeholder => "Search", "aria-label" => "Search"}
-        %button.btn.btn-outline-success.my-2.my-sm-0{ :type => "submit"} Search 
+          -if current_user
+            %li.nav-item
+              %a.nav-link{ :href => computers_path } My Computers
+          -if current_user
+            %li.nav-item
+              %a.nav-link{ :href => users_path } Users
+          - if admin?
+            %li.nav-item
+              %a.nav-link{ :href => admin_path } Admin
+
+      %ul.nav.navbar-nav.navbar-right
+        - if current_user
+          %li.nav.nav-item
+            %span.nav.navbar-text{style: "margin-right: 10px;"}
+              Logged in as
+              =current_user.name
+          %li.nav.nav-item
+            %a{href: logout_path}
+              %button.nav-item.btn.btn-outline-danger Log Out
+        - else
+          %li.nav-item
+            %a{ href: login_path}
+              %button.nav-item.btn.btn-outline-success Log In
+        -# %input.form-control.mr-sm-2{ :type => "text", :placeholder => "Search", "aria-label" => "Search"}
+        -# %button.btn.btn-outline-success.my-2.my-sm-0{ :type => "submit"} Search 

@@ -1,0 +1,10 @@
+.row
+  .col
+    %h1 Log In
+=bootstrap_form_tag url: sessions_path do |f|
+  .form-row
+    .field.col= f.text_field :email
+  .form-row
+    .field.col= f.password_field :password
+  .form-row
+    .actions=f.submit "Log In"

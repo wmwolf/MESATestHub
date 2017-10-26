@@ -1,0 +1,30 @@
+.row
+  .col
+    %h1 New User
+
+=bootstrap_form_for @user do |f|
+  - if @user.errors.any?
+    .form-row
+      .col.alert.alert-danger
+        %h4.alert-heading= "#{pluralize(@user.errors.count, "error")} prohibited this test case from being saved:"
+        %p
+          %ul
+            - @user.errors.full_messages.each do |message|
+              %li= message      
+  .form-row
+    .col.field=f.text_field :email, placeholder: 'paxton@kitp.ucsb.edu'
+  .form-row
+    .col.field=f.password_field :password
+    .col.field=f.password_field :password_confirmation
+  .form-row
+    .col.field=f.text_field :name
+  .form-row
+    .col.field
+      =f.form_group :admin, label: { text: "Is this person an admin?" } do
+        =f.check_box :admin do
+          Check this to make the user an admin. Admins can add or remove test
+          cases and users. They can edit test results of any user (not just
+          their own). A non-admin can submit tests and edit their own results.
+  .form-row
+    .actions=f.submit 'Save', {class: 'btn btn-lg btn-primary'}
+

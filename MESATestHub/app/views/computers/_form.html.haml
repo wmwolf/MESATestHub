@@ -11,7 +11,8 @@
     .col.field
       = f.text_field :name, placeholder: "Compy 5000"
     .col.field
-      = f.text_field :user, placeholder: "Bill Paxton"
+      = f.select :user_id, User.all.order(:name).collect { |user| [user.name, user.id] }, selected: current_user.id
+      -# = f.text_field :user, placeholder: "Bill Paxton"
   .form-row
     .col.field
       = f.text_field :platform, placeholder: "macOS"

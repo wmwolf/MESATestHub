@@ -1,6 +1,8 @@
 class TestCasesController < ApplicationController
   before_action :set_test_case, only: [:show, :edit, :update, :destroy]
 
+  before_action :authorize_admin, only: [:edit, :update, :destroy, :new, :create]
+
   # GET /test_cases
   # GET /test_cases.json
   def index

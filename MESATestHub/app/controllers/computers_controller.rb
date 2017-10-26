@@ -1,10 +1,13 @@
 class ComputersController < ApplicationController
   before_action :set_computer, only: [:show, :edit, :update, :destroy]
+  before_action :set_user, only: [:show, :edit, :update, :destroy]
+  before_action :authorize_user, only: [:index, :show, :new, :create]
+  before_action :authorize_self_or_admin, only: [:edit, :update, :destroy]
 
   # GET /computers
   # GET /computers.json
   def index
-    @computers = Computer.all
+    @computers = current_user.computers
   end
 
   # GET /computers/1
@@ -14,7 +17,7 @@ class ComputersController < ApplicationController
 
   # GET /computers/new
   def new
-    @computer = Computer.new
+    @computer = current_user.computers.build
   end
 
   # GET /computers/1/edit
@@ -24,15 +27,23 @@ class ComputersController < ApplicationController
   # POST /computers
   # POST /computers.json
   def create
+    # only allow admins or the computer's user to create the computer
+    # i.e., oner user cannot make a computer for another user
     @computer = Computer.new(computer_params)
-
-    respond_to do |format|
-      if @computer.save
-        format.html { redirect_to @computer, notice: 'Computer was successfully created.' }
-        format.json { render :show, status: :created, location: @computer }
-      else
-        format.html { render :new }
-        format.json { render json: @computer.errors, status: :unprocessable_entity }
+    @computer.validate_user(current_user)
+    # this if clause shouldn't be necessary, but I can't get it to work
+    # otherwise
+    if @computer.errors.any?
+      render 'new'
+    else
+      respond_to do |format|
+        if @computer.save
+          format.html { redirect_to @computer, notice: 'Computer was successfully created.' }
+          format.json { render :show, status: :created, location: @computer }
+        else
+          format.html { render :new }
+          format.json { render json: @computer.errors, status: :unprocessable_entity }
+        end
       end
     end
   end
@@ -41,6 +52,15 @@ class ComputersController < ApplicationController
   # PATCH/PUT /computers/1.json
   def update
     respond_to do |format|
+      if computer_params[:user_id]
+        # only allow setting the computer's user to the logged in user unless
+        # it's an admin. Skip the process if a user_id wasn't specified.
+        unless admin? or current_user.id == computer_params[:user_id]
+          @computer.errors.add(:user_id, "May only associate computers to "+
+            "yourself unless you are an admin.")
+        end
+      end
+
       if @computer.update(computer_params)
         format.html { redirect_to @computer, notice: 'Computer was successfully updated.' }
         format.json { render :show, status: :ok, location: @computer }
@@ -67,8 +87,20 @@ class ComputersController < ApplicationController
       @computer = Computer.find(params[:id])
     end
 
+    def set_user
+      @user = @computer.user
+    end
+
     # Never trust parameters from the scary internet, only allow the white list through.
     def computer_params
-      params.require(:computer).permit(:name, :user, :platform, :processor, :ram_gb)
+      params.require(:computer).permit(:name, :user_id, :platform, :processor, :ram_gb)
     end
+
+    def authorize_self_or_admin
+      unless admin? or @user.id == current_user.id
+        redirect_to login_url, alert: "Must be an admin or the user in " +
+        "question to do that action."
+      end
+    end
+
 end

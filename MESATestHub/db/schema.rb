@@ -10,20 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171012225322) do
+ActiveRecord::Schema.define(version: 20171026010738) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "computers", force: :cascade do |t|
     t.string "name", null: false
-    t.string "user"
-    t.string "email"
     t.string "platform"
     t.string "processor"
     t.integer "ram_gb"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "user_id"
+    t.index ["user_id"], name: "index_computers_on_user_id"
   end
 
   create_table "test_cases", force: :cascade do |t|
@@ -80,6 +80,15 @@ ActiveRecord::Schema.define(version: 20171012225322) do
     t.datetime "updated_at", null: false
     t.index ["computer_id"], name: "index_test_instances_on_computer_id"
     t.index ["test_case_id"], name: "index_test_instances_on_test_case_id"
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.string "email"
+    t.string "password_digest"
+    t.boolean "admin"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "name"
   end
 
   add_foreign_key "test_data", "test_instances"
