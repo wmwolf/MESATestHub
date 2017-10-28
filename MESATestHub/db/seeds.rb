@@ -381,17 +381,17 @@ computers = Computer.create(
   [
     {
       name: 'euchre',
-      user: User.where(name: 'Bill Wolf').first
+      user: User.where(name: 'Bill Wolf').first,
       platform: 'macOS',
       processor: '2.7GHz 12-Core Intel Xeon E5',
-      ram_gb: 64,
+      ram_gb: 64
     },
     {
       name: 'rummy',
-      user: User.where(name: 'Bill Wolf').first
+      user: User.where(name: 'Bill Wolf').first,
       platform: 'macOS',
       processor: '3.1GHz Intel Core i7',
-      ram_gb: 16,
+      ram_gb: 16
     }
   ]
 )

@@ -9,7 +9,7 @@ Bundler.require(*Rails.groups)
 module MESATestHub
   class Application < Rails::Application
 
-    config.force_ssl = true
+    # config.force_ssl = true
 
     config.generators do |g|
       g.test_framework :rspec,

@@ -10,7 +10,8 @@
           %th Name
           %th Email
           %th Computers
-          %th
+          - if current_user.admin?
+            %th
           %th
           %th
 
@@ -27,8 +28,9 @@
                   =link_to(c.name, c) + ', '
             %td= link_to 'Show', user_path(user)
             %td= link_to 'Edit', edit_user_path(user)
-            %td= link_to 'Delete', user_path(user), method: :delete
+            - if current_user.admin?
+              %td= link_to 'Delete', user_path(user), method: :delete, data: {confirm: "Are you absolutely sure you want to delete this user?\n\nAll of their computers and test data will be deleted, too."}
 .row
   .col
     %a{href: new_user_path}
-      %button.btn.btn-secondary Create User
+      %button.btn.btn-primary Create User

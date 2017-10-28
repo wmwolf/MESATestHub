@@ -1,6 +1,8 @@
 .row
   .col
-    %h1 New User
+    %h1
+      Edit
+      =@user.name
 
 =bootstrap_form_for @user do |f|
   - if @user.errors.any?
@@ -12,16 +14,18 @@
             - @user.errors.full_messages.each do |message|
               %li= message      
   .form-row
-    .col.field=f.text_field :email, placeholder: 'paxton@kitp.ucsb.edu'
+    .col.field=f.text_field :email
   .form-row
-    .col.field=f.password_field :password
-    .col.field=f.password_field :password_confirmation
+    .col.field=f.password_field :password, label: "New Password"
+    .col.field=f.password_field :password_confirmation, label: "Confirm New Password"
   .form-row
     .col.field=f.text_field :name
-  .form-row
-    .col.field
-      =f.form_group :admin do
-        =f.check_box :admin
+  - if current_user.admin?
+    .form-row
+      .col.field
+        =f.form_group :admin, label: { text: "Is this person an admin?" } do
+          =f.check_box :admin
+
   .form-row
     .actions=f.submit 'Save', {class: 'btn btn-lg btn-primary'}
 

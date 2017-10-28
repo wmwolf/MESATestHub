@@ -5,7 +5,9 @@ class TestDataController < ApplicationController
   
   before_action :set_test_datum, only: [:show, :edit, :update, :destroy]
 
+  before_action :set_user, only: [:edit, :update, :destroy]
   before_action :authorize_self_or_admin, only: [:edit, :update, :destroy]
+  before_action :authorize_user, only: [:new, :create]
 
   # GET /test_data
   # GET /test_data.json
@@ -80,6 +82,7 @@ class TestDataController < ApplicationController
 
     def set_user
       @user ||= @test_datum.test_instance.computer.user
+    end
 
     def authorize_self_or_admin
       unless admin? or @user.id == current_user.id

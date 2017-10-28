@@ -13,8 +13,8 @@ class TestInstance < ApplicationRecord
     test_data.where(name: name).order(updated_at: :desc).first.value = new_value
   end
 
-  def set_computer_name(new_computer_name)
-    new_computer = Computer.where(name: new_computer_name).first
+  def set_computer_name(user, new_computer_name)
+    new_computer = user.computers.where(name: new_computer_name).first
     if new_computer.nil?
       errors.add :computer_id, "Could not find computer with name \"#{new_computer_name}\"."
     else

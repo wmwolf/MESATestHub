@@ -10,7 +10,8 @@ class TestInstancesController < ApplicationController
   # GET /test_instances
   # GET /test_instances.json
   def index
-    @test_instances = @test_case.test_instances.order(mesa_version: :desc, created_at: :desc)
+    @test_instances = @test_case.test_instances.order(mesa_version: :desc,
+      created_at: :desc)
   end
 
   # GET /test_instances/1
@@ -33,25 +34,53 @@ class TestInstancesController < ApplicationController
   # POST /test_instances/submit
   # POST /test_instances/submit.json
   def submit
-    # find the appropriate test_case and computer
 
-    @test_instance = TestInstance.new(submission_instance_params)
-    @test_instance.set_test_case_name(params[:test_case])
-    @test_instance.set_computer_name(params[:computer])
+    # first thing: authenticate the user
 
-    respond_to do |format|
-      if @test_instance.save
-        @test_case = @test_instance.test_case
-        data_params.each do |data_name, data_val|
-          datum = @test_instance.test_data.build(name: data_name)
-          datum.value = data_val
-          datum.save!
+    # If logged on to website, we're good
+    user = current_user
+    authenticated = !user.nil?
+
+    # If not logged on, or submitting via JSON post (likely), check params
+    unless authenticated
+      user = User.find_by(email: params[:email])
+      authenticated = user && user.authenticate(params[:password])
+    end
+
+    # params authentication failed. Redirect (html) or report failure (JSON)
+    if not authenticated
+      respond_to do |format|
+        format.html { redirect_to login_url,
+          alert: "Must be signed in to submit a test instance."}
+        format.json { render json: {error: "Invalid e-mail or password."}, 
+          status: :unprocessable_entity}
+      end
+
+
+    # we are authenticated from params or session
+    else
+      # find the appropriate test_case and computer
+      @test_instance = TestInstance.new(submission_instance_params)
+      @test_instance.set_test_case_name(params[:test_case])
+      @test_instance.set_computer_name(user, params[:computer])
+
+      respond_to do |format|
+        if @test_instance.save
+          @test_case = @test_instance.test_case
+          data_params.each do |data_name, data_val|
+            datum = @test_instance.test_data.build(name: data_name)
+            datum.value = data_val
+            datum.save!
+          end
+          format.html { redirect_to test_case_test_instances_url(@test_case),
+            notice: 'Test instance was successfully created.' }
+          format.json { render :show, status: :created,
+            location: test_case_test_instance_path(@test_case, @test_instance)}
+        else
+          format.html { render :new }
+          format.json { render json: @test_instance.errors,
+            status: :unprocessable_entity }
         end
-        format.html { redirect_to test_case_test_instances_url(@test_case), notice: 'Test instance was successfully created.' }
-        format.json { render :show, status: :created, location: test_case_test_instance_path(@test_case, @test_instance) }
-      else
-        format.html { render :new }
-        format.json { render json: @test_instance.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -65,11 +94,13 @@ class TestInstancesController < ApplicationController
 
     respond_to do |format|
       if @test_instance.save
-        format.html { redirect_to test_case_test_instances_url(@test_case), notice: 'Test instance was successfully created.' }
-        format.json { render :show, status: :created, location: @test_instance }
+        format.html { redirect_to test_case_test_instances_url(@test_case),
+          notice: 'Test instance was successfully created.' }
+        format.json { render :show, status: :created, location: @test_instance}
       else
         format.html { render :new }
-        format.json { render json: @test_instance.errors, status: :unprocessable_entity }
+        format.json { render json: @test_instance.errors,
+          status: :unprocessable_entity }
       end
     end
   end
@@ -79,11 +110,13 @@ class TestInstancesController < ApplicationController
   def update
     respond_to do |format|
       if @test_instance.update(test_instance_params)
-        format.html { redirect_to test_case_test_instances_url(@test_case), notice: 'Test instance was successfully updated.' }
+        format.html { redirect_to test_case_test_instances_url(@test_case),
+          notice: 'Test instance was successfully updated.' }
         format.json { render :show, status: :ok, location: @test_instance }
       else
         format.html { render :edit }
-        format.json { render json: @test_instance.errors, status: :unprocessable_entity }
+        format.json { render json: @test_instance.errors,
+          status: :unprocessable_entity }
       end
     end
   end
@@ -93,7 +126,10 @@ class TestInstancesController < ApplicationController
   def destroy
     @test_instance.destroy
     respond_to do |format|
-      format.html { redirect_to test_case_test_instances_url(@test_instance.test_case), notice: 'Test instance was successfully destroyed.' }
+      format.html do
+        redirect_to test_case_test_instances_url(@test_instance.test_case),
+        notice: 'Test instance was successfully destroyed.'
+      end
       format.json { head :no_content }
     end
   end
@@ -109,7 +145,8 @@ class TestInstancesController < ApplicationController
       @test_case = TestCase.find(params[:test_case_id])
     end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
+    # Never trust parameters from the scary internet, only allow the white list
+    #through.
 
 
     # these are params used in submission that are NOT used for creating the

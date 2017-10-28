@@ -4,6 +4,8 @@ class ComputersController < ApplicationController
   before_action :authorize_user, only: [:index, :show, :new, :create]
   before_action :authorize_self_or_admin, only: [:edit, :update, :destroy]
 
+  skip_before_action :verify_authenticity_token, only: [:check_computer]
+
   # GET /computers
   # GET /computers.json
   def index
@@ -38,11 +40,13 @@ class ComputersController < ApplicationController
     else
       respond_to do |format|
         if @computer.save
-          format.html { redirect_to @computer, notice: 'Computer was successfully created.' }
+          format.html { redirect_to @computer,
+            notice: 'Computer was successfully created.' }
           format.json { render :show, status: :created, location: @computer }
         else
           format.html { render :new }
-          format.json { render json: @computer.errors, status: :unprocessable_entity }
+          format.json { render json: @computer.errors,
+            status: :unprocessable_entity }
         end
       end
     end
@@ -62,11 +66,13 @@ class ComputersController < ApplicationController
       end
 
       if @computer.update(computer_params)
-        format.html { redirect_to @computer, notice: 'Computer was successfully updated.' }
+        format.html { redirect_to @computer,
+          notice: 'Computer was successfully updated.' }
         format.json { render :show, status: :ok, location: @computer }
       else
         format.html { render :edit }
-        format.json { render json: @computer.errors, status: :unprocessable_entity }
+        format.json { render json: @computer.errors,
+          status: :unprocessable_entity }
       end
     end
   end
@@ -76,8 +82,55 @@ class ComputersController < ApplicationController
   def destroy
     @computer.destroy
     respond_to do |format|
-      format.html { redirect_to computers_url, notice: 'Computer was successfully destroyed.' }
+      format.html { redirect_to computers_url,
+        notice: 'Computer was successfully destroyed.' }
       format.json { head :no_content }
+    end
+  end
+
+  # POST /check_computer.json
+  # pretty dumb for html, but it should work, I guess
+  def check_computer
+    user = User.find_by(email: check_computer_params[:email])
+    if user && user.authenticate(check_computer_params[:password])
+      if user.computers.find_by(name: check_computer_params[:computer_name])
+        # authenticated and computer belongs to user. Proceed!
+        respond_to do |format|
+          format.html do
+            session[:user_id] = user.id
+            redirect_to computers_path
+          end
+          format.json do
+            # send back the all clear
+            render json: { valid: true,
+              message: "Email, password, and computer name accepted" }
+          end
+        end
+      else
+        # authenticated, but computer matching fails
+        respond_to do |format|
+          format.html do
+            session[:user_id] = user.id
+            redirect_to computer_path, alert: "#{params[:computer_name]} " +
+              "is not one of your computers."
+          end
+          format.json do
+            render json: { valid: false,
+              message: "Email and password are valid, computer name is not."}
+          end
+        end
+      end
+    else
+      # we are NOT authenticated
+      respond_to do |format|
+        format.html do
+          flash.error = "Email or password is invalid"
+          redirect_to login_path
+        end
+        format.json do
+          render json: { valid: false, message: "Email or password are wrong."}
+        end
+      end
     end
   end
 
@@ -91,9 +144,15 @@ class ComputersController < ApplicationController
       @user = @computer.user
     end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
+    # Never trust parameters from the scary internet, only allow the white list
+    # through.
     def computer_params
-      params.require(:computer).permit(:name, :user_id, :platform, :processor, :ram_gb)
+      params.require(:computer).permit(:name, :user_id, :platform, :processor,
+        :ram_gb)
+    end
+
+    def check_computer_params
+      params.permit(:email, :password, :computer_name)
     end
 
     def authorize_self_or_admin

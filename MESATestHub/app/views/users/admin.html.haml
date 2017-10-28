@@ -1,9 +1,152 @@
 .row
   .col
     %h1 Administrator Actions
+    %p 
+      %b
+        Below are controls that are largely scattered throughout the web app
+        that only administrators can access. They are assembled here for
+        convenience.
 
 .row
   .col
-    %p 
-      At some point this will contain a bunch of buttons that allow admins
-      to do stuff.
+    %h2 Test Control
+    %p
+      Add, edit, or delete test cases.
+.row
+  .col
+    %h4 Add New Test Case
+    %hr
+
+= bootstrap_form_for @test_case, inline_errors: false do |f|
+
+  - if @test_case.errors.any?
+    .form-row
+      .col.alert.alert-danger
+        %h4.alert-heading= "#{pluralize(@test_case.errors.count, "error")} prohibited this test case from being saved:"
+        %p
+          %ul
+            - @test_case.errors.full_messages.each do |message|
+              %li= message      
+  .form-row
+    .col.field
+      = f.text_field :name, placeholder: 'wd2'
+    .col.field
+      = f.number_field :version_added, placeholder: 10000
+  .form-row
+    .col.field
+      = f.text_area :description, placeholder: 'description of what the test does'
+      %small.form-text.text-muted What does the test do? Describe the physical situation at hand (i.e. an accreting white dwarf) and what constitutes "success" (i.e. it undergoes several flashes and then settles into stable burning).
+  .form-row
+    .col.field
+      = f.text_field :datum_1_name, placeholder: 'name of additional data to be tracked'
+    .col.field
+      = f.select(:datum_1_type, options_for_select([['', nil], ['string', 'string'], ['float', 'float'], ['integer', 'integer'], ['boolean', 'boolean']]))
+  .form-row
+    .col.field
+      = f.text_field :datum_2_name, placeholder: 'name of additional data to be tracked'
+    .col.field
+      = f.select(:datum_2_type, options_for_select([['', nil], ['string', 'string'], ['float', 'float'], ['integer', 'integer'], ['boolean', 'boolean']]))
+  .form-row
+    .col.field
+      = f.text_field :datum_3_name, placeholder: 'name of additional data to be tracked'
+    .col.field
+      = f.select(:datum_3_type, options_for_select([['', nil], ['string', 'string'], ['float', 'float'], ['integer', 'integer'], ['boolean', 'boolean']]))
+  .form-row
+    .col.field
+      = f.text_field :datum_4_name, placeholder: 'name of additional data to be tracked'
+    .col.field
+      = f.select(:datum_4_type, options_for_select([['', nil], ['string', 'string'], ['float', 'float'], ['integer', 'integer'], ['boolean', 'boolean']]))
+  .form-row
+    .col.field
+      = f.text_field :datum_5_name, placeholder: 'name of additional data to be tracked'
+    .col.field
+      = f.select(:datum_5_type, options_for_select([['', nil], ['string', 'string'], ['float', 'float'], ['integer', 'integer'], ['boolean', 'boolean']]))
+  .form-row
+    .col.field
+      = f.text_field :datum_6_name, placeholder: 'name of additional data to be tracked'
+    .col.field
+      = f.select(:datum_6_type, options_for_select([['', nil], ['string', 'string'], ['float', 'float'], ['integer', 'integer'], ['boolean', 'boolean']]))
+  .form-row
+    .col.field
+      = f.text_field :datum_7_name, placeholder: 'name of additional data to be tracked'
+    .col.field
+      = f.select(:datum_7_type, options_for_select([['', nil], ['string', 'string'], ['float', 'float'], ['integer', 'integer'], ['boolean', 'boolean']]))
+  .form-row
+    .col.field
+      = f.text_field :datum_8_name, placeholder: 'name of additional data to be tracked'
+    .col.field
+      = f.select(:datum_8_type, options_for_select([['', nil], ['string', 'string'], ['float', 'float'], ['integer', 'integer'], ['boolean', 'boolean']]))
+  .form-row
+    .col.field
+      = f.text_field :datum_9_name, placeholder: 'name of additional data to be tracked'
+    .col.field
+      = f.select(:datum_9_type, options_for_select([['', nil], ['string', 'string'], ['float', 'float'], ['integer', 'integer'], ['boolean', 'boolean']]))
+  .form-row
+    .col.field
+      = f.text_field :datum_10_name, placeholder: 'name of additional data to be tracked'
+    .col.field
+      = f.select(:datum_10_type, options_for_select([['', nil], ['string', 'string'], ['float', 'float'], ['integer', 'integer'], ['boolean', 'boolean']]))
+  .actions
+    = f.submit 'Save', {class: "btn btn-lg btn-primary"}
+.row
+  .col
+    %hr
+.row
+  .col
+    %h4 Edit/Delete Test cases (needs to be implemented)
+    %hr
+
+.row
+  .col
+    %h2 User Control
+    %p Add, edit, or delete users
+    %hr
+.row
+  .col
+    %h4 Add new user
+=bootstrap_form_for @user do |f|
+  - if @user.errors.any?
+    .form-row
+      .col.alert.alert-danger
+        %h4.alert-heading= "#{pluralize(@user.errors.count, "error")} prohibited this user from being saved:"
+        %p
+          %ul
+            - @user.errors.full_messages.each do |message|
+              %li= message      
+  .form-row
+    .col.field=f.text_field :email
+  .form-row
+    .col.field=f.password_field :password, label: "New Password"
+    .col.field=f.password_field :password_confirmation, label: "Confirm New Password"
+  .form-row
+    .col.field=f.text_field :name
+  - if current_user.admin?
+    .form-row
+      .col.field
+        =f.form_group :admin do
+          =f.check_box :admin
+  .form-row
+    .actions=f.submit 'Save', {class: 'btn btn-lg btn-primary'}
+%hr
+
+.row
+  .col
+    .h4 Edit User
+=bootstrap_form_tag url: admin_edit_user_path, method: 'get' do |f|
+  .form-row
+    .col.field=f.select :user_id, @users.collect {|user| [user.name, user.id]}
+  .form-row
+    .actions=f.submit 'Edit', {class: 'btn btn-lg'}
+%hr
+.row
+  .col
+    %h4 Delete User
+=bootstrap_form_tag url: admin_delete_user_path, method: 'delete' do |f|
+  .form-row
+    .col.field=f.select :user_id, @users.collect {|user| [user.name, user.id]}
+  .form-row
+    .actions=f.submit 'Delete', {class: 'btn btn-lg btn-danger', data: {confirm: "Are you absolutely sure you want to delete this user?\n\nAll of their computers and test data will be deleted, too."}}
+
+
+
+      
