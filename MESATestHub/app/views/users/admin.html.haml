@@ -31,6 +31,8 @@
     .col.field
       = f.text_field :name, placeholder: 'wd2'
     .col.field
+      = f.select :module, @modules.collect { |mod| [mod, mod] }, { include_blank: true}
+    .col.field
       = f.number_field :version_added, placeholder: 10000
   .form-row
     .col.field

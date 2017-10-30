@@ -16,6 +16,12 @@ class TestCase < ApplicationRecord
   validates_inclusion_of :datum_9_type, in: ['integer', 'float', 'string', 'boolean'], allow_blank: true
   validates_inclusion_of :datum_10_type, in: ['integer', 'float', 'string', 'boolean'], allow_blank: true
 
+
+  def TestCase.modules
+    ['star', 'binary']
+  end
+  validates_inclusion_of :module, in: TestCase.modules, allow_blank: true
+
   # this is ugly and hard-codey, but what're ya gonna do?
   def data_names
     [datum_1_name, datum_2_name, datum_3_name, datum_4_name,

@@ -7,6 +7,10 @@
       %span{class:@last_version_class}=@last_version_status
     %table.table
       %tr
+        %th{scope: 'row'} Module
+        %td
+          %samp=@test_case.module
+      %tr
         %th{scope: 'row'} Description
         %td=@test_case.description
       %tr
@@ -21,9 +25,11 @@
         %th{scope: 'row'} Version Added
         %td= @test_case.version_added
     .btn-group{style: 'margin-bottom: 20px'}
-      = link_to 'Edit', edit_test_case_path(@test_case), class: 'btn btn-primary btn-lg text-light'
+      - if admin?
+        = link_to 'Edit', edit_test_case_path(@test_case), class: 'btn btn-primary btn-lg text-light'
       = link_to 'View All Cases', test_cases_path, class: 'btn btn-secondary btn-lg text-light'
-      = link_to 'Delete', @test_case, method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-lg text-light'
+      - if admin?
+        = link_to 'Delete', @test_case, method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-lg text-light'
   .col-lg-6.col-xs-12
     %h3
       Test Instances for version
@@ -45,5 +51,6 @@
       .alert.alert-warning
         %h4 No tests have been run yet.
     .btn-group
-      = link_to 'Add Instance', new_test_case_test_instance_path(@test_case), class: 'btn btn-primary btn-lg text-light'
+      - if admin?
+        = link_to 'Add Instance', new_test_case_test_instance_path(@test_case), class: 'btn btn-primary btn-lg text-light'
       = link_to 'View All Instances', test_case_test_instances_path(@test_case), class: 'btn btn-secondary btn-lg text-light'

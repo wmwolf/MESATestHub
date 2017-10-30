@@ -45,10 +45,12 @@ class TestCasesController < ApplicationController
   # GET /test_cases/new
   def new
     @test_case = TestCase.new
+    @modules = TestCase.modules
   end
 
   # GET /test_cases/1/edit
   def edit
+    @modules = TestCase.modules
   end
 
   # POST /test_cases
@@ -99,7 +101,7 @@ class TestCasesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def test_case_params
-      params.require(:test_case).permit(:name, :version_added, :description, :last_version, :last_version_status, :last_test_status, :last_tested, :datum_1_name, :datum_1_type, :datum_2_name, :datum_2_type, :datum_3_name, :datum_3_type, :datum_4_name, :datum_4_type, :datum_5_name, :datum_5_type, :datum_6_name, :datum_6_type, :datum_7_name, :datum_7_type, :datum_8_name, :datum_8_type, :datum_9_name, :datum_9_type, :datum_10_name, :datum_10_type)
+      params.require(:test_case).permit(:name, :module, :version_added, :description, :last_version, :last_version_status, :last_test_status, :last_tested, :datum_1_name, :datum_1_type, :datum_2_name, :datum_2_type, :datum_3_name, :datum_3_type, :datum_4_name, :datum_4_type, :datum_5_name, :datum_5_type, :datum_6_name, :datum_6_type, :datum_7_name, :datum_7_type, :datum_8_name, :datum_8_type, :datum_9_name, :datum_9_type, :datum_10_name, :datum_10_type)
     end
 
     # get a bootstrap text class and an appropriate string to convert integer 

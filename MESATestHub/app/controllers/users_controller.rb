@@ -65,6 +65,10 @@ class UsersController < ApplicationController
 
     # for building a new test case
     @test_case = TestCase.new
+
+    # for making select field for a new test case
+    @modules = TestCase.modules
+    
     render "admin"
   end
 
