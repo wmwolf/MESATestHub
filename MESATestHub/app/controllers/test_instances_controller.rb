@@ -165,9 +165,7 @@ class TestInstancesController < ApplicationController
 
     # allowed params for using the submit controller action
     def submission_params
-      params.permit(:runtime_seconds, :mesa_version, :omp_num_threads,
-        :compiler, :compiler_version, :platform_version, :passed,
-        *submission_bonus_keys)
+      params.permit(*[instance_keys, submission_bonus_keys].flatten)
     end
 
     # once we're in submit, these are the params used to build the new instance
