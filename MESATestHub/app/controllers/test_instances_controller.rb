@@ -159,7 +159,8 @@ class TestInstancesController < ApplicationController
 
     def instance_keys
       [:runtime_seconds, :mesa_version, :omp_num_threads, :compiler,
-        :compiler_version, :platform_version, :passed]
+        :compiler_version, :platform_version, :passed, :failure_type,
+        :success_type]
     end
 
     # allowed params for using the submit controller action
