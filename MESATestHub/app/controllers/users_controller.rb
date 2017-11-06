@@ -27,9 +27,14 @@ class UsersController < ApplicationController
 
   def update
     respond_to do |format|
+      # set custom params hash to make sure admin doesn't get spoofed
       update_params = {}
       user_params.each { |key, value| update_params[key] = value }
+
+      # only admins can upgrade users to admin status
       update_params['admin'] = false unless current_user.admin?
+
+      # do update
       if @user.update(update_params)
         format.html { redirect_to @user, notice: @user.name + 
           ' was successfully updated.' }

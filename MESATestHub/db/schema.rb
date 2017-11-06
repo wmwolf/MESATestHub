@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171030220214) do
+ActiveRecord::Schema.define(version: 20171106163749) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -79,6 +79,8 @@ ActiveRecord::Schema.define(version: 20171030220214) do
     t.bigint "test_case_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "success_type"
+    t.string "failure_type"
     t.index ["computer_id"], name: "index_test_instances_on_computer_id"
     t.index ["test_case_id"], name: "index_test_instances_on_test_case_id"
   end

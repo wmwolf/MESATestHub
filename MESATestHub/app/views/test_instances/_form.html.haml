@@ -8,15 +8,30 @@
             - @test_case.errors.full_messages.each do |message|
               %li= message      
   .form-row
-    .col.field
-      .card.text-white.bg-primary.mb-3
-        .card-header
-          %h4 Did the test pass?
-        .card-body
-          %p.card-text
-            = f.form_group :passed do
-              =f.radio_button :passed, true, label: "Passed"
-              =f.radio_button :passed, false, label: "Failed"
+    .col
+      .card-deck
+        .card.text-white.bg-primary.mb-3
+          .card-header
+            %h4 Did the test pass?
+          .card-body.field
+            %p.card-text
+              = f.form_group :passed do
+                =f.radio_button :passed, true, value: true, label: "Passed"
+                =f.radio_button :passed, false, value: false, label: "Failed"
+        .card.text-white.bg-primary.mb-3
+          .card-header
+            %h4 How Did it Pass?
+          .card-body.field
+            %p.card-text
+              = f.select :success_type, TestInstance.success_types.each_pair.map { |key, val| [val, key]}, label: "Success Type (if successful)", include_blank: true
+        .card.text-white.bg-primary.mb-3
+          .card-header
+            %h4 How Did it Fail?
+          .card-body.field
+            %p.card-text
+              = f.select :failure_type, TestInstance.failure_types.each_pair.map { |key, val| [val, key]}, label: "Failure Type (if unsuccessful)", include_blank: true
+
+
   .form-row
     .col
       .card-deck
@@ -29,7 +44,7 @@
             .field
               = f.number_field :mesa_version
             .field
-              = f.select :computer_id, Computer.all.order(:name). collect { |c| [c.name, c.id] }
+              = f.select :computer_id, current_user.computers.collect { |c| [c.name, c.id] }
         .card.text-white.bg-dark.mb-3
           .card-header
             %h4 Other useful data
@@ -37,7 +52,7 @@
             .field
               = f.number_field :omp_num_threads, label: "Number of threads"
             .field  
-              = f.select(:compiler, options_for_select([['', nil], ['gfortran', 'gfortran'], ['ifort', 'ifort']]), label: "Compiler")
+              = f.select(:compiler, TestInstance.compilers, include_blank: true)
   
   .form-row
     .col
@@ -48,7 +63,7 @@
           .field
             = f.text_field :platform_version, label: "Platform version (e.g. macOS 10.13 or Ubuntu 16.4"
           .field
-            = f.text_field :compiler_version, label: "Compiler version (e.g. 7.0.2)"
+            = f.text_field :compiler_version, label: "Compiler version (e.g. 7.0.2 or 20170921)"
   .form-row
     .col
       .actions

@@ -18,8 +18,7 @@ class TestInstancesController < ApplicationController
   # GET /test_instances/1.json
   def show
     @passage_class = @test_instance.passed ? 'text-success' : 'text-danger'
-    @passage_status = @test_instance.passed ? 'PASS' : 'FAIL'
-
+    @passage_status = @test_instance.passage_status
   end
 
   # GET /test_instances/new
@@ -189,7 +188,8 @@ class TestInstancesController < ApplicationController
     def test_instance_params
       params.require(:test_instance).permit(:runtime_seconds, 
         :mesa_version, :omp_num_threads, :compiler, :compiler_version,
-        :platform_version, :passed, :computer_id, :test_case_id)
+        :platform_version, :passed, :computer_id, :test_case_id, :success_type,
+        :failure_type)
     end
 
     def authorize_self_or_admin

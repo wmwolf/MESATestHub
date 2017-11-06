@@ -24,9 +24,9 @@
         %td= ((test_instance.computer.platform || '' ) + ' ' + (test_instance.platform_version || '')).strip
         %td
           -if test_instance.passed
-            %span.text-success Passed
+            %span.text-success= test_instance.passage_status
           -else
-            %span.text-danger Failed
+            %span.text-danger= test_instance.passage_status
         %td= test_instance.computer.name
         %td= link_to 'Show', [ @test_case, test_instance]
         %td= link_to 'Edit', edit_test_case_test_instance_path(@test_case, test_instance)

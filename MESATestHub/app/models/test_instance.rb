@@ -1,9 +1,39 @@
 class TestInstance < ApplicationRecord
+
+  @@success_types =  {
+    'run_test_string' => 'Test String',
+    'run_checksum' => 'Run Checksum',
+    'photo_checksum' => 'Photo Checksum'
+  }
+
+  @@failure_types = {
+    'run_test_string' => 'Test String',
+    'run_checksum' => 'Run Checksum',
+    'run_diff' => 'Run Diff',
+    'photo_file' => 'Missing Photo',
+    'photo_checksum' => 'Photo Checkusm',
+    'photo_diff' => 'Photo Diff'
+  }
+
+  @@compilers = %w{gfortran ifort SDK}
+
   belongs_to :computer
   belongs_to :test_case
   has_many :test_data, dependent: :destroy
-  validates_presence_of :runtime_seconds, :mesa_version, :passed, :computer_id,
+  validates_presence_of :runtime_seconds, :mesa_version, :computer_id,
     :test_case_id
+  validates_inclusion_of :passed, in: [true, false]
+  validates_inclusion_of :success_type, in: @@success_types.keys,
+    allow_blank: true
+  validates_inclusion_of :failure_type, in: @@failure_types.keys,
+    allow_blank: true
+  validates_inclusion_of :compiler, in: @@compilers, allow_blank: true
+
+  def self.success_types; @@success_types; end
+
+  def self.failure_types; @@failure_types; end
+
+  def self.compilers; @@compilers; end
 
   def data(name)
     test_data.where(name: name).order(updated_at: :desc).first.value
@@ -28,6 +58,23 @@ class TestInstance < ApplicationRecord
       errors.add :test_case_id, "Could not find test case with name \"#{new_test_case_name}\"."
     else
       self.test_case = new_test_case
+    end
+  end
+
+  # full text for passage status
+  def passage_status
+    if passed
+      if success_type
+        "PASS: #{TestInstance.success_types[success_type]}"
+      else
+        "PASS"
+      end
+    else
+      if failure_type
+        "FAIL: #{TestInstance.failure_types[failure_type]}"
+      else
+        "FAIL"
+      end
     end
   end
 

@@ -6,7 +6,8 @@ class TestCasesController < ApplicationController
   # GET /test_cases
   # GET /test_cases.json
   def index
-    @test_cases = TestCase.order(name: :asc)
+    set_all_test_cases
+    @test_cases = @all_test_cases
     @row_classes = {}
     @test_cases.each do |t|
       if t.last_version_status == 0
