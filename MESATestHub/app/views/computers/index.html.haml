@@ -1,6 +1,8 @@
 .row
   .col
-    %h1= "#{@user.name}'s Computers"
+    %h1 
+      = @owner_prefix
+      Computers
 
 .row
   .col
@@ -12,8 +14,9 @@
           %th Processor
           %th Ram [GB]
           %th
-          %th
-          %th
+          -if self_or_admin?
+            %th
+            %th
 
       %tbody
         - @computers.each do |computer|
@@ -22,12 +25,15 @@
             %td.align-middle.align-middle= computer.platform
             %td.align-middle= computer.processor
             %td.align-middle= computer.ram_gb
-            %td.align-middle= link_to 'Show', user_computer_path(@user, computer), class: 'btn btn-sm btn-secondary text-light'
-            %td.align-middle= link_to 'Edit', edit_user_computer_path(@user, computer), class: 'btn btn-sm btn-primary text-light'
-            %td.align-middle= link_to 'Destroy', user_computer_path(@user, computer), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-sm btn-danger text-light'
+            %td.align-middle= link_to 'Show', user_computer_path(computer.user, computer), class: 'btn btn-sm btn-secondary text-light'
+            - if self_or_admin?
+              %td.align-middle= link_to 'Edit', edit_user_computer_path(computer.user, computer), class: 'btn btn-sm btn-primary text-light'
+              %td.align-middle= link_to 'Destroy', user_computer_path(computer.user, computer), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-sm btn-danger text-light'
 
-.row
-  .col.text-center
-    .btn-group
-      = link_to 'New Computer', new_user_computer_path(@user), class: 'btn btn-primary btn-lg text-light'
-      = link_to 'View User', user_path(@user), class: 'btn btn-secondary btn-lg text-light'
+- if @user
+  .row
+    .col.text-center
+      .btn-group
+        - if self_or_admin?
+          = link_to 'New Computer', new_user_computer_path(@user), class: 'btn btn-primary btn-lg text-light'
+        = link_to 'View User', user_path(@user), class: 'btn btn-secondary btn-lg text-light'

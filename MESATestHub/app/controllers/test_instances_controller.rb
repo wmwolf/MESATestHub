@@ -1,11 +1,14 @@
 class TestInstancesController < ApplicationController
   before_action :set_test_case, except: [:submit]
   before_action :set_test_instance, only: %i[show edit update destroy]
+  # set_user depends on @test_instance being set, so it can only be used
+  # where set_test_instance has already been called.
+  before_action :set_user, only: %i[edit update destroy]
   skip_before_action :verify_authenticity_token, only: [:submit]
 
   # note that submit does some fancy footwork on the fly
-  before_action :authorize_self_or_admin, only: %i[new edit update destroy]
-  before_action :authorize_user, only: :create
+  before_action :authorize_self_or_admin, only: %i[edit update destroy]
+  before_action :authorize_user, only: %i[new create]
 
   # GET /test_instances
   # GET /test_instances.json
@@ -19,7 +22,7 @@ class TestInstancesController < ApplicationController
   def show
     @passage_class = @test_instance.passed ? 'text-success' : 'text-danger'
     @passage_status = @test_instance.passage_status
-    @self_or_admin = admin? || @user.id == current_user.id
+    @self_or_admin = admin? || (@user && @user.id == current_user.id)
   end
 
   # GET /test_instances/new
@@ -160,6 +163,10 @@ class TestInstancesController < ApplicationController
     @test_case = TestCase.find(params[:test_case_id])
   end
 
+  def set_user
+    @user = @test_instance.computer.user
+  end
+
   # Never trust parameters from the scary internet, only allow the white list
   # through.
 
@@ -204,11 +211,5 @@ class TestInstancesController < ApplicationController
       :compiler_version, :platform_version, :passed, :computer_id,
       :test_case_id, :success_type, :failure_type
     )
-  end
-
-  def authorize_self_or_admin
-    return if admin? || @user.id == current_user.id
-    redirect_to login_url, alert: 'Must be an admin or the user in ' \
-      'question to do that action.'
   end
 end

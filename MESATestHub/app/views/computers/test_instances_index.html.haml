@@ -1,31 +1,32 @@
 .row
   .col
     %h1 
-      Instances of
-      %samp=@test_case.name
-
+      Test instances run by
+      =@computer.name
 .row
   .col
     %table.table.table-sm.table-responsive
       %thead.thead-default
         %tr
           %th Version
+          %th Test Case
           %th Created
           %th Runtime
           %th Threads
           %th Compiler
           %th Platform
           %th Status
-          %th Computer
           %th
           - if admin?
             %th
             %th
 
       %tbody
-        - @test_instances.each do |test_instance|
+        - @computer_instances.each do |test_instance|
           %tr
             %td.align-middle= test_instance.mesa_version
+            %td.align-middle
+              %samp= link_to test_instance.test_case.name, test_instance.test_case            
             %td.align-middle= test_instance.created_at.utc.strftime "%Y-%m-%d"
             %td.align-middle
               = test_instance.runtime_seconds
@@ -38,15 +39,12 @@
                 %span.text-success= test_instance.passage_status
               -else
                 %span.text-danger= test_instance.passage_status
-            %td.align-middle= link_to test_instance.computer.name, [test_instance.computer.user, test_instance.computer]
-            %td.align-middle= link_to 'Show', [ @test_case, test_instance], class: 'btn btn-sm btn-secondary text-light'
+            %td.align-middle= link_to 'Show', [ test_instance.test_case, test_instance], class: 'btn btn-sm btn-secondary text-light'
             -if admin?
-              %td.align-middle= link_to 'Edit', edit_test_case_test_instance_path(@test_case, test_instance), class: 'btn btn-sm btn-primary text-light'
-              %td.align-middle= link_to 'Destroy', [@test_case, test_instance], method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-sm btn-danger text-light'
+              %td.align-middle= link_to 'Edit', edit_test_case_test_instance_path(test_instance.test_case, test_instance), class: 'btn btn-sm btn-primary text-light'
+              %td.align-middle= link_to 'Destroy', [test_instance.test_case, test_instance], method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-sm btn-danger text-light'
 
 .row
   .col.text-center
     .btn-group
-      = link_to 'Test Overview', test_case_path(@test_case), class: 'btn btn-secondary text-light'
-      -if admin?
-        = link_to 'New Test Instance', new_test_case_test_instance_path, class: 'btn btn-primary text-light'
+      = link_to 'Computer Overview', user_computer_path(@user, @computer), class: 'btn btn-secondary btn-lg text-light'

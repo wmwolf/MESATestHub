@@ -3,16 +3,24 @@ class ComputersController < ApplicationController
                                     test_instances_index]
   before_action :set_computer, only: %i[show edit update destroy
                                         test_instances_index]
-  before_action :authorize_user, only: %i[index show]
   before_action :authorize_self_or_admin, only: %i[new create edit update
                                                    destroy]
+  before_action :authorize_admin, only: %i[index_all]
 
   skip_before_action :verify_authenticity_token, only: [:check_computer]
 
   # GET /computers
   # GET /computers.json
   def index
+    @owner_prefix = "#{@user.name}'s"
     @computers = @user.computers
+  end
+
+  def index_all
+    @owner_prefix = 'All'
+    @computers = Computer.all
+    # @computers.sort_by { |c| c.user.name }
+    render 'index'
   end
 
   # GET /computers/1/test_instances
@@ -53,7 +61,11 @@ class ComputersController < ApplicationController
   # POST /computers
   # POST /computers.json
   def create
-    @computer = @user.computers.build(computer_params)
+    @computer = Computer.new(computer_params)
+    unless admin? || current_user.id == computer_params[:user_id]
+      @computer.errors.add(:user_id, 'May only associate computers to ' \
+        'yourself unless you are an admin.')
+    end
 
     # this if clause shouldn't be necessary, but I can't get it to work
     # otherwise
@@ -63,7 +75,7 @@ class ComputersController < ApplicationController
       respond_to do |format|
         if @computer.save
           format.html do
-            redirect_to [@user, @computer],
+            redirect_to [@computer.user, @computer],
                         notice: 'Computer was successfully created.'
           end
           format.json { render :show, status: :created, location: @computer }
@@ -92,7 +104,7 @@ class ComputersController < ApplicationController
 
       if @computer.update(computer_params)
         format.html do
-          redirect_to [@user, @computer],
+          redirect_to user_computer_path(computer_params[:user_id], @computer),
                       notice: 'Computer was successfully updated.'
         end
         format.json { render :show, status: :ok, location: @computer }

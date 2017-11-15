@@ -10,27 +10,26 @@
           %th Name
           %th Email
           %th Computers
-          - if current_user.admin?
-            %th
-          %th
           %th
 
       %tbody
         - @users.each do |user|
           %tr
-            %td= user.name
-            %td= user.email
-            %td 
+            %td.align-middle= user.name
+            %td.align-middle= user.email
+            %td.align-middle 
               -user.computers.each do |c| 
                 -if c == user.computers[-1]
                   =link_to c.name, user_computer_path(user, c)
                 -else
                   =link_to(c.name, user_computer_path(user, c)) + ', '
-            %td= link_to 'Show', user_path(user)
-            %td= link_to 'Edit', edit_user_path(user)
-            - if current_user.admin?
-              %td= link_to 'Delete', user_path(user), method: :delete, data: {confirm: "Are you absolutely sure you want to delete this user?\n\nAll of their computers and test data will be deleted, too."}
-.row
-  .col
-    %a{href: new_user_path}
-      %button.btn.btn-primary Create User
+            %td.align-middle
+              = link_to 'Show', user_path(user), class: 'btn btn-sm btn-secondary text-light'
+              - if current_user.admin?
+                = link_to 'Edit', edit_user_path(user), class: 'btn btn-sm btn-primary text-light'
+                = link_to 'Delete', user_path(user), method: :delete, data: {confirm: "Are you absolutely sure you want to delete this user?\n\nAll of their computers and test data will be deleted, too."}, class: 'btn btn-sm btn-danger text-light'
+- if admin?
+  .row
+    .col.text-center
+      %a{href: new_user_path}
+        %button.btn.btn-primary.btn-lg Create User

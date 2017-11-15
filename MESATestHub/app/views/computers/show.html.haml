@@ -21,9 +21,11 @@
     %br
     .text-center
       .btn-group
-        = link_to 'Edit', edit_user_computer_path(@user, @computer), class: 'btn btn-lg btn-primary text-light'
-        = link_to 'View My Computers', user_computers_path(@user), class: 'btn btn-lg btn-secondary text-light'
-        = link_to 'Delete', [@user, @computer], method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-lg text-light'
+        - if self_or_admin?
+          = link_to 'Edit', edit_user_computer_path(@user, @computer), class: 'btn btn-lg btn-primary text-light'
+        = link_to "View #{self? ? 'My' : @user.name + "'s"} Computers", user_computers_path(@user), class: 'btn btn-lg btn-secondary text-light'
+        - if self_or_admin?
+          = link_to 'Delete', [@user, @computer], method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-lg text-light'
   .col-lg-6.col-xs-12
     - if @latest_instances.empty?
       .alert.alert-warning.align-middle

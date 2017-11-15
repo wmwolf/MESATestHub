@@ -38,6 +38,6 @@
             %td= test_case.last_version
             %td= test_case.last_tested
 .row
-  .col
-    %a{href: new_test_case_path}
-      %button.btn.btn-secondary Create Test Case
+  .col.text-center
+    - if admin?
+      =link_to "Create Test Case", new_test_case_path, class: 'btn btn-lg btn-primary text-light'

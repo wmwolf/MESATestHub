@@ -68,5 +68,7 @@
       = f.text_field :datum_10_name, placeholder: 'name of additional data to be tracked'
     .col.field
       = f.select(:datum_10_type, options_for_select([['', nil], ['string', 'string'], ['float', 'float'], ['integer', 'integer'], ['boolean', 'boolean']]))
-  .actions
-    = f.submit 'Save', {class: "btn btn-lg btn-primary"}
+  .form-row
+    .col.text-center
+      .actions
+        = f.submit 'Save', {class: "btn btn-lg btn-primary"}

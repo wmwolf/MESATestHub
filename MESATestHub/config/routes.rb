@@ -27,7 +27,11 @@ Rails.application.routes.draw do
   post 'check_user', to: 'sessions#check_credentials', as: 'check_user'
   post 'check_computer', to: 'computers#check_computer', as: 'check_computer'
 
+  # index of a particular user's computers's test instances
   get 'user/:user_id/computers/:id/test_instances',
       to: 'computers#test_instances_index',
       as: 'user_computer_test_instances'
+
+  # global list of all computers (admins only)
+  get 'all_computers', to: 'computers#index_all', as: 'all_computers'
 end
