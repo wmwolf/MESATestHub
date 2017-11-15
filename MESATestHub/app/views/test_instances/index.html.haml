@@ -1,37 +1,52 @@
-%h1 Listing test_instances
+.row
+  .col
+    %h1 
+      Instances of
+      %samp=@test_case.name
 
-%table.table.table-sm.table-fluid
-  %thead.thead-default
-    %tr
-      %th Runtime [s]
-      %th MESA Version
-      %th Threads
-      %th Compiler
-      %th Platform
-      %th Status
-      %th Computer
-      %th
-      %th
-      %th
+.row
+  .col
+    %table.table.table-sm.table-responsive
+      %thead.thead-default
+        %tr
+          %th Version
+          %th Created
+          %th Runtime
+          %th Threads
+          %th Compiler
+          %th Platform
+          %th Status
+          %th Computer
+          %th
+          - if admin?
+            %th
+            %th
 
-  %tbody
-    - @test_instances.each do |test_instance|
-      %tr
-        %td= test_instance.runtime_seconds
-        %td= test_instance.mesa_version
-        %td= test_instance.omp_num_threads
-        %td= ((test_instance.compiler || '') + ' ' + (test_instance.compiler_version || '')).strip
-        %td= ((test_instance.computer.platform || '' ) + ' ' + (test_instance.platform_version || '')).strip
-        %td
-          -if test_instance.passed
-            %span.text-success= test_instance.passage_status
-          -else
-            %span.text-danger= test_instance.passage_status
-        %td= test_instance.computer.name
-        %td= link_to 'Show', [ @test_case, test_instance]
-        %td= link_to 'Edit', edit_test_case_test_instance_path(@test_case, test_instance)
-        %td= link_to 'Destroy', [@test_case, test_instance], method: :delete, data: { confirm: 'Are you sure?' }
+      %tbody
+        - @test_instances.each do |test_instance|
+          %tr
+            %td.align-middle= test_instance.mesa_version
+            %td.align-middle= test_instance.created_at.utc.strftime "%Y-%m-%d"
+            %td.align-middle
+              = test_instance.runtime_seconds
+              s
+            %td.align-middle= test_instance.omp_num_threads
+            %td.align-middle= ((test_instance.compiler || '') + ' ' + (test_instance.compiler_version || '')).strip
+            %td.align-middle= ((test_instance.computer.platform || '' ) + ' ' + (test_instance.platform_version || '')).strip
+            %td.align-middle
+              -if test_instance.passed
+                %span.text-success= test_instance.passage_status
+              -else
+                %span.text-danger= test_instance.passage_status
+            %td.align-middle= link_to test_instance.computer.name, test_instance.computer
+            %td.align-middle= link_to 'Show', [ @test_case, test_instance], class: 'btn btn-sm btn-secondary text-light'
+            -if admin?
+              %td.align-middle= link_to 'Edit', edit_test_case_test_instance_path(@test_case, test_instance), class: 'btn btn-sm btn-primary text-light'
+              %td.align-middle= link_to 'Destroy', [@test_case, test_instance], method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-sm btn-danger text-light'
 
-%br
-
-= link_to 'New Test instance', new_test_case_test_instance_path
+.row
+  .col.text-center
+    .btn-group
+      = link_to 'Test Overview', test_case_path(@test_case), class: 'btn btn-secondary text-light'
+      -if admin?
+        = link_to 'New Test Instance', new_test_case_test_instance_path, class: 'btn btn-primary text-light'

@@ -18,11 +18,13 @@ class ApplicationController < ActionController::Base
 
   # filters for accessing resources reserved for users or admins
   def authorize_user
-    redirect_to login_url, alert: "Must be logged in for that action." if current_user.nil?
+    return unless current_user.nil?
+    redirect_to login_url, alert: 'Must be logged in for that action.'
   end
 
   def authorize_admin
-    redirect_to login_url, alert: "Must be an admin to do that action." unless admin?
+    return if admin?
+    redirect_to login_url, alert: 'Must be an admin to do that action.'
   end
 
   # so that the menubar in every page can access the test case inventory
@@ -30,5 +32,4 @@ class ApplicationController < ActionController::Base
     @all_test_cases = TestCase.where(module: :star).order(name: :asc) +
                       TestCase.where(module: :binary).order(name: :asc)
   end
-
 end

@@ -1,41 +1,63 @@
-%p#notice= notice
+.row
+  .col
+    %p#notice= notice
 
-%p
-  %b Test Case
-  %samp= link_to @test_case.name, @test_case
-%p
-  %b Runtime:
-  = @test_instance.runtime_seconds
-  seconds
-%p
-  %b MESA Version:
-  = @test_instance.mesa_version
-%p
-  %b Computer:
-  = link_to @test_instance.computer.name, computer_path(@test_instance.computer)
-%p
-  %b Threads:
-  = @test_instance.omp_num_threads
-%p
-  %b Compiler:
-  - if @test_instance.compiler.nil? 
-    =''
-  - else
-    =(@test_instance.compiler + ' ' + (@test_instance.compiler_version || '')).strip
-%p
-  %b Platform:
-  - if @test_instance.computer.platform.nil?
-    =''
-  - else
-    = (@test_instance.computer.platform + ' ' + (@test_instance.platform_version || '')).strip
-%p
-  %b Result:
-  %span{ class: @passage_class }=@passage_status
-- @test_instance.test_data.each do |test_data|
-  %p
-    %b=test_data.name + ':'
-    =test_data.value
+.row
+  .col
+    %h1 Test Instance Detail
+.row
+  .col-sm-6
+    %p
+      %b Test Case
+      %samp= link_to @test_case.name, @test_case
+    %p
+      %b MESA Version:
+      = @test_instance.mesa_version
+    %p
+      %b Date Submitted:
+      = @test_instance.created_at
+    %p
+      %b Runtime:
+      = @test_instance.runtime_seconds
+      seconds
+  .col-sm-6
+    %p
+      %b Computer:
+      = link_to @test_instance.computer.name, computer_path(@test_instance.computer)
+    %p
+      %b Threads:
+      = @test_instance.omp_num_threads
+    %p
+      %b Compiler:
+      - if @test_instance.compiler.nil? 
+        =''
+      - else
+        =(@test_instance.compiler + ' ' + (@test_instance.compiler_version || '')).strip
+    %p
+      %b Platform:
+      - if @test_instance.computer.platform.nil?
+        =''
+      - else
+        = (@test_instance.computer.platform + ' ' + (@test_instance.platform_version || '')).strip
+.row
+  .col
+    -if @test_instance.test_data.length > 0
+      - @test_instance.test_data.each do |test_data|
+        %p
+          %b=test_data.name + ':'
+          =test_data.value
 
-= link_to 'Edit', edit_test_case_test_instance_path(@test_case, @test_instance)
-\|
-= link_to 'Back', test_case_path(@test_case)
+.row
+  .col.text-center
+    %h4
+      Result:
+      %b{ class: @passage_class }=@passage_status
+
+.row
+  .col.text-center
+    .btn-group
+      - if @self_or_admin
+        = link_to 'Edit', edit_test_case_test_instance_path(@test_case, @test_instance), class: 'btn btn-primary text-light'
+      = link_to 'All Test Instances', test_case_test_instances_path(@test_case), class: 'btn btn-secondary text-light'
+      - if @self_or_admin
+        = link_to 'Destroy', [@test_case, @test_instance], method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger text-light'

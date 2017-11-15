@@ -65,6 +65,9 @@
           .field
             = f.text_field :compiler_version, label: "Compiler version (e.g. 7.0.2 or 20170921)"
   .form-row
-    .col
-      .actions
+    .col.text-center
+      .btn-group.actions
+        = link_to "View All Instances", test_case_test_instances_path(@test_case), class: 'btn btn-lg btn-secondary text-light'
+        - if @show_path
+          = link_to "Show", test_case_test_instance_path(@test_case, @test_instance), class: 'btn btn-lg btn-secondary text-light'
         = f.submit 'Save', {class: 'btn btn-lg btn-primary'}

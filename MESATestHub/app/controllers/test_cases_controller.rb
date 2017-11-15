@@ -1,7 +1,7 @@
 class TestCasesController < ApplicationController
-  before_action :set_test_case, only: [:show, :edit, :update, :destroy]
+  before_action :set_test_case, only: %i[show edit update destroy]
 
-  before_action :authorize_admin, only: [:edit, :update, :destroy, :new, :create]
+  before_action :authorize_admin, only: %i[edit update destroy new create]
 
   # GET /test_cases
   # GET /test_cases.json
@@ -10,13 +10,13 @@ class TestCasesController < ApplicationController
     @test_cases = @all_test_cases
     @row_classes = {}
     @test_cases.each do |t|
-      if t.last_version_status == 0
-        @row_classes[t] = 'table-success'
-      elsif t.last_version_status == 1
-        @row_classes[t] = 'table-danger'
-      else
-        @row_classes[t] = 'table-warning'
-      end
+      @row_classes[t] =
+        case t.last_version_status
+        when 0 then 'table-success'
+        when 1 then 'table-danger'
+        else
+          'table-warning'
+        end
     end
   end
 
@@ -24,23 +24,28 @@ class TestCasesController < ApplicationController
   # GET /test_cases/1.json
   def show
     # all test instances, sorted by upload date
-    @test_instances = @test_case.test_instances.where(mesa_version: @test_case.last_version).order(created_at: :desc)
+    @test_instances = @test_case.test_instances.where(
+      mesa_version: @test_case.last_version
+    ).order(created_at: :desc)
     @test_instance_classes = {}
     @test_instances.each do |instance|
-      if instance.passed
-        @test_instance_classes[instance] = 'table-success'
-      else
-        @test_instance_classes[instance] = 'table-danger'
-      end
+      @test_instance_classes[instance] =
+        if instance.passed
+          'table-success'
+        else
+          'table-danger'
+        end
     end
 
     # text and class for last version test status
     @last_version_status, @last_version_class = passing_status_and_class(
-      @test_case.last_version_status)
+      @test_case.last_version_status
+    )
 
     # text and class for last test status
     @last_test_status, @last_test_class = passing_status_and_class(
-      @test_case.last_test_status)
+      @test_case.last_test_status
+    )
   end
 
   # GET /test_cases/new
@@ -61,11 +66,15 @@ class TestCasesController < ApplicationController
 
     respond_to do |format|
       if @test_case.save
-        format.html { redirect_to @test_case, notice: 'Test case was successfully created.' }
+        format.html do
+          redirect_to @test_case, notice: 'Test case was successfully created.'
+        end
         format.json { render :show, status: :created, location: @test_case }
       else
         format.html { render :new }
-        format.json { render json: @test_case.errors, status: :unprocessable_entity }
+        format.json do
+          render json: @test_case.errors, status: :unprocessable_entity
+        end
       end
     end
   end
