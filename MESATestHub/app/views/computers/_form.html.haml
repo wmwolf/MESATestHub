@@ -1,4 +1,4 @@
-= bootstrap_form_for @computer do |f|
+= bootstrap_form_for [@user, @computer] do |f|
   - if @computer.errors.any?  
     .form-row
       .col.alert.alert-danger
@@ -20,6 +20,10 @@
       = f.text_field :processor, placeholder: "2.7 GHz 12-Core Intel Xeon E5"
     .col.field
       = f.number_field :ram_gb, placeholder: 16
-  .form-row
-    .actions
-      = f.submit 'Save', class: 'btn btn-primary btn-lg'
+  .form-row.text-center
+    .col.actions
+      .btn-group
+        = link_to 'View My Computers', user_computers_path(@user), class: 'btn btn-secondary btn-lg text-light'
+        - if @show_path
+          = link_to 'Show', @show_path, class: 'btn btn-secondary btn-lg text-light'
+        = f.submit 'Save', class: 'btn btn-primary btn-lg'

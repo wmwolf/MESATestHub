@@ -18,7 +18,7 @@
                 =test_case.name
           -if current_user
             %li.nav-item
-              %a.nav-link{ :href => computers_path } My Computers
+              %a.nav-link{ :href => user_computers_path(current_user) } My Computers
           -if current_user
             %li.nav-item
               %a.nav-link{ :href => users_path } Users

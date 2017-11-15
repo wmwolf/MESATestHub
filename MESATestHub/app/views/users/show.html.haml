@@ -16,6 +16,6 @@
       %b Computers
       %ul
         -@user.computers.each do |comp|
-          %li=link_to comp.name, comp
+          %li=link_to comp.name, user_computer_path(@user, comp)
 
 

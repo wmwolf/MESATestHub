@@ -32,7 +32,7 @@
         = link_to 'Delete', @test_case, method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-lg text-light'
   .col-lg-6.col-xs-12
     %h3
-      Test Instances for version
+      Test instances for version
       =@test_case.last_version
     - if not @test_instances.empty?
       %table.table.table-hover.table-sm.table-responsive#test-detail

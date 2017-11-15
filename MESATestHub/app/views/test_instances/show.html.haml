@@ -23,7 +23,7 @@
   .col-sm-6
     %p
       %b Computer:
-      = link_to @test_instance.computer.name, computer_path(@test_instance.computer)
+      = link_to @test_instance.computer.name, user_computer_path(@test_instance.computer.user, @test_instance.computer)
     %p
       %b Threads:
       = @test_instance.omp_num_threads

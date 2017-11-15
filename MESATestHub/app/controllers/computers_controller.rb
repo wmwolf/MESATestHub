@@ -1,38 +1,60 @@
 class ComputersController < ApplicationController
-  before_action :set_computer, only: [:show, :edit, :update, :destroy]
-  before_action :set_user, only: [:show, :edit, :update, :destroy]
-  before_action :authorize_user, only: [:index, :show, :new, :create]
-  before_action :authorize_self_or_admin, only: [:edit, :update, :destroy]
+  before_action :set_user, only: %i[show new create index edit update destroy
+                                    test_instances_index]
+  before_action :set_computer, only: %i[show edit update destroy
+                                        test_instances_index]
+  before_action :authorize_user, only: %i[index show]
+  before_action :authorize_self_or_admin, only: %i[new create edit update
+                                                   destroy]
 
   skip_before_action :verify_authenticity_token, only: [:check_computer]
 
   # GET /computers
   # GET /computers.json
   def index
-    @computers = current_user.computers
+    @computers = @user.computers
+  end
+
+  # GET /computers/1/test_instances
+  # GET /computers/1/test_instances.json
+  def test_instances_index
+    @computer_instances = @computer.test_instances.order(mesa_version: :desc)
   end
 
   # GET /computers/1
   # GET /computers/1.json
   def show
+    @computer_instances = @computer.test_instances
+    @latest_version = @computer_instances.maximum(:mesa_version)
+    @latest_instances = @computer_instances.where(
+      mesa_version: @latest_version
+    ).order(created_at: :desc)
+    @test_instance_classes = {}
+    @latest_instances.each do |instance|
+      @test_instance_classes[instance] =
+        if instance.passed
+          'table-success'
+        else
+          'table-danger'
+        end
+    end
   end
 
   # GET /computers/new
   def new
-    @computer = current_user.computers.build
+    @computer = @user.computers.build
   end
 
   # GET /computers/1/edit
   def edit
+    @show_path = user_computer_path(@user, @computer)
   end
 
   # POST /computers
   # POST /computers.json
   def create
-    # only allow admins or the computer's user to create the computer
-    # i.e., oner user cannot make a computer for another user
-    @computer = Computer.new(computer_params)
-    @computer.validate_user(current_user)
+    @computer = @user.computers.build(computer_params)
+
     # this if clause shouldn't be necessary, but I can't get it to work
     # otherwise
     if @computer.errors.any?
@@ -40,13 +62,16 @@ class ComputersController < ApplicationController
     else
       respond_to do |format|
         if @computer.save
-          format.html { redirect_to @computer,
-            notice: 'Computer was successfully created.' }
+          format.html do
+            redirect_to [@user, @computer],
+                        notice: 'Computer was successfully created.'
+          end
           format.json { render :show, status: :created, location: @computer }
         else
           format.html { render :new }
-          format.json { render json: @computer.errors,
-            status: :unprocessable_entity }
+          format.json do
+            render json: @computer.errors, status: :unprocessable_entity
+          end
         end
       end
     end
@@ -59,20 +84,23 @@ class ComputersController < ApplicationController
       if computer_params[:user_id]
         # only allow setting the computer's user to the logged in user unless
         # it's an admin. Skip the process if a user_id wasn't specified.
-        unless admin? or current_user.id == computer_params[:user_id]
-          @computer.errors.add(:user_id, "May only associate computers to "+
-            "yourself unless you are an admin.")
+        unless admin? || current_user.id == computer_params[:user_id]
+          @computer.errors.add(:user_id, 'May only associate computers to ' \
+            'yourself unless you are an admin.')
         end
       end
 
       if @computer.update(computer_params)
-        format.html { redirect_to @computer,
-          notice: 'Computer was successfully updated.' }
+        format.html do
+          redirect_to [@user, @computer],
+                      notice: 'Computer was successfully updated.'
+        end
         format.json { render :show, status: :ok, location: @computer }
       else
         format.html { render :edit }
-        format.json { render json: @computer.errors,
-          status: :unprocessable_entity }
+        format.json do
+          render json: @computer.errors, status: :unprocessable_entity
+        end
       end
     end
   end
@@ -82,8 +110,10 @@ class ComputersController < ApplicationController
   def destroy
     @computer.destroy
     respond_to do |format|
-      format.html { redirect_to computers_url,
-        notice: 'Computer was successfully destroyed.' }
+      format.html do
+        redirect_to user_computers_url(@user),
+                    notice: 'Computer was successfully destroyed.'
+      end
       format.json { head :no_content }
     end
   end
@@ -98,12 +128,14 @@ class ComputersController < ApplicationController
         respond_to do |format|
           format.html do
             session[:user_id] = user.id
-            redirect_to computers_path
+            redirect_to user_computers_path(user)
           end
           format.json do
             # send back the all clear
-            render json: { valid: true,
-              message: "Email, password, and computer name accepted" }
+            render json: {
+              valid: true,
+              message: 'Email, password, and computer name accepted'
+            }
           end
         end
       else
@@ -111,12 +143,15 @@ class ComputersController < ApplicationController
         respond_to do |format|
           format.html do
             session[:user_id] = user.id
-            redirect_to computer_path, alert: "#{params[:computer_name]} " +
-              "is not one of your computers."
+            redirect_to user_computers_path(user),
+                        alert: "#{params[:computer_name]} is not one of your " \
+                               'computers.'
           end
           format.json do
-            render json: { valid: false,
-              message: "Email and password are valid, computer name is not."}
+            render json: {
+              valid: false,
+              message: 'Email and password are valid, computer name is not.'
+            }
           end
         end
       end
@@ -135,31 +170,30 @@ class ComputersController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_computer
-      @computer = Computer.find(params[:id])
-    end
 
-    def set_user
-      @user = @computer.user
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_computer
+    @computer = @user.computers.find(params[:id])
+  end
 
-    # Never trust parameters from the scary internet, only allow the white list
-    # through.
-    def computer_params
-      params.require(:computer).permit(:name, :user_id, :platform, :processor,
-        :ram_gb)
-    end
+  def set_user
+    @user = User.find(params[:user_id])
+  end
 
-    def check_computer_params
-      params.permit(:email, :password, :computer_name)
-    end
+  # Never trust parameters from the scary internet, only allow the white list
+  # through.
+  def computer_params
+    params.require(:computer).permit(:name, :user_id, :platform, :processor,
+                                     :ram_gb)
+  end
 
-    def authorize_self_or_admin
-      unless admin? or @user.id == current_user.id
-        redirect_to login_url, alert: "Must be an admin or the user in " +
-        "question to do that action."
-      end
-    end
+  def check_computer_params
+    params.permit(:email, :password, :computer_name)
+  end
 
+  def authorize_self_or_admin
+    return if admin? || @user.id == current_user.id
+    redirect_to login_url, alert: 'Must be an admin or the user in ' \
+      'question to do that action.'
+  end
 end

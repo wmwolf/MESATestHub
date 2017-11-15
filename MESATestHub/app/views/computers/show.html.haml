@@ -1,21 +1,46 @@
-%p#notice= notice
+.row
+  .col
+    %p#notice= notice
 
-%p
-  %b Name:
-  = @computer.name
-%p
-  %b User:
-  = @computer.user_name
-%p
-  %b Platform:
-  = @computer.platform
-%p
-  %b Processor:
-  = @computer.processor
-%p
-  %b Ram gb:
-  = @computer.ram_gb
-
-= link_to 'Edit', edit_computer_path(@computer)
-\|
-= link_to 'Back', computers_path
+.row
+  .col-lg-6.col-xs-12
+    %h3="#{@computer.name} details"
+    %table.table
+      %tr
+        %th{scope: 'row'} User
+        %td= link_to @user.name, user_path(@user)
+      %tr
+        %th{scope: 'row'} Platform
+        %td=@computer.platform
+      %tr
+        %th{scope: 'row'} Processor
+        %td=@computer.processor
+      %tr
+        %th{scope: 'row'} RAM
+        %td=@computer.ram_gb.to_s + ' GB'
+    %br
+    .text-center
+      .btn-group
+        = link_to 'Edit', edit_user_computer_path(@user, @computer), class: 'btn btn-lg btn-primary text-light'
+        = link_to 'View My Computers', user_computers_path(@user), class: 'btn btn-lg btn-secondary text-light'
+        = link_to 'Delete', [@user, @computer], method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-lg text-light'
+  .col-lg-6.col-xs-12
+    - if @latest_instances.empty?
+      .alert.alert-warning.align-middle
+        %h4 No tests have been run yet
+    - else
+      %h3= "Latest results from #{@computer.name}"
+      %table.table.table-hover.table-sm.table-responsive#computer-detail
+        %thead.thead-default
+          %tr
+            %th Date Uploaded
+            %th Test Case
+            %th Runtime [s]
+          %tbody
+            - @latest_instances.each do |instance|
+              %tr{class: @test_instance_classes[instance] + ' clickable-row', 'data-href': test_case_test_instance_path(instance.test_case, instance)}
+                %td=instance.created_at
+                %td=instance.test_case.name
+                %td=instance.runtime_seconds 
+    .text-center
+      = link_to "All tests from #{@computer.name}", user_computer_test_instances_path(@user, @computer), class: 'btn btn-lg btn-secondary text-light'

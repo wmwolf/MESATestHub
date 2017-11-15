@@ -4,7 +4,7 @@
 
 .row
   .col
-    %table.table.table-hover.table-responsive#test_summary
+    %table.table.table-responsive#test_summary
       %thead.thead-default
         %tr
           %th Name
@@ -23,9 +23,9 @@
             %td 
               -user.computers.each do |c| 
                 -if c == user.computers[-1]
-                  =link_to c.name, c
+                  =link_to c.name, user_computer_path(user, c)
                 -else
-                  =link_to(c.name, c) + ', '
+                  =link_to(c.name, user_computer_path(user, c)) + ', '
             %td= link_to 'Show', user_path(user)
             %td= link_to 'Edit', edit_user_path(user)
             - if current_user.admin?
