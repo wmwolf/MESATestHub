@@ -71,4 +71,8 @@
   .form-row
     .col.text-center
       .actions
-        = f.submit 'Save', {class: "btn btn-lg btn-primary"}
+        .btn-group
+          = link_to 'View All Test Cases', test_cases_path, class: 'btn btn-lg btn-secondary text-light'
+          - if @show_path
+            = link_to 'Show', @show_path, class: 'btn btn-lg btn-secondary text-light'
+          = f.submit 'Save', {class: "btn btn-lg btn-primary"}

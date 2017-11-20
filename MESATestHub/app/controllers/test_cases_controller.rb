@@ -57,6 +57,7 @@ class TestCasesController < ApplicationController
   # GET /test_cases/1/edit
   def edit
     @modules = TestCase.modules
+    @show_path = test_case_path(@test_case)
   end
 
   # POST /test_cases
