@@ -32,7 +32,7 @@ class ComputersController < ApplicationController
   # GET /computers/1
   # GET /computers/1.json
   def show
-    @computer_instances = @computer.test_instances
+    @computer_instances = @computer.test_instances.limit(20)
     @latest_version = @computer_instances.maximum(:mesa_version)
     @latest_instances = @computer_instances.where(
       mesa_version: @latest_version

@@ -26,7 +26,7 @@ class TestCasesController < ApplicationController
     # all test instances, sorted by upload date
     @test_instances = @test_case.test_instances.where(
       mesa_version: @test_case.last_version
-    ).order(created_at: :desc)
+    ).order(created_at: :desc).limit(20)
     @test_instance_classes = {}
     @test_instances.each do |instance|
       @test_instance_classes[instance] =
