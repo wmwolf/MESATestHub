@@ -22,7 +22,7 @@ class TestInstance < ApplicationRecord
   has_many :test_data, dependent: :destroy
   validates_presence_of :runtime_seconds, :mesa_version, :computer_id,
     :test_case_id
-  validates_inclusion_of :passed, in: [true, false]
+  # validates_inclusion_of :passed, in: [true, false]
   validates_inclusion_of :success_type, in: @@success_types.keys,
     allow_blank: true
   validates_inclusion_of :failure_type, in: @@failure_types.keys,
