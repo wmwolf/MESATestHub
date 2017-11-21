@@ -44,10 +44,9 @@ class ApplicationController < ActionController::Base
                                   'resource to do that action.'
   end
 
-
   # so that the menubar in every page can access the test case inventory
   def set_all_test_cases
-    @all_test_cases = TestCase.where(module: :star).order(name: :asc) +
-                      TestCase.where(module: :binary).order(name: :asc)
+    @all_test_cases ||= TestCase.where(module: :star).order(name: :asc) +
+                        TestCase.where(module: :binary).order(name: :asc)
   end
 end

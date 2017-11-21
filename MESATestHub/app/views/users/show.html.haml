@@ -1,21 +1,66 @@
 .row
   .col
-    %h1
-      =@user.name
-      Details
-
+    %p#notice= notice
 .row
-  .col
-    %p
-      %b Name
-      =@user.name
-    %p
-      %b Email
-      =@user.email
-    %p
-      %b Computers
-      %ul
-        -@user.computers.each do |comp|
-          %li=link_to comp.name, user_computer_path(@user, comp)
-
-
+  .col-lg-6.col-xs-12
+    %h3= "#{@user.name} Details"
+    %table.table
+      %tr
+        %th{scope: 'row'} Name
+        %td= @user.name
+      %tr
+        %th{scope: 'row'} Email
+        %td= @user.email
+      %tr
+        %th{scope: 'row'} Admin
+        %td= @user.admin ? 'Yes' : 'No'
+    .text-center
+      .btn-group
+        = link_to 'All Users', users_path, class: 'btn btn-md btn-secondary text-light'
+        - if self_or_admin?
+          = link_to 'Edit', edit_user_path(@user), class: 'btn btn-md btn-primary text-light'
+        - if admin?
+          = link_to 'Delete', user_path(@user), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-md btn-danger text-light'
+    - unless @user.computers.empty?
+      %hr
+      %h3= "#{@user.name}'s Computers"
+      %table.table
+        %thead.thead-default
+          %tr
+            %th Name
+            %th Actions
+        %tbody
+          - @computers.each do |computer|
+            %tr
+              %td.align-middle= computer.name
+              %td.align-middle
+                .btn-group
+                  =link_to 'Show', user_computer_path(@user, computer), class: 'btn btn-sm btn-secondary text-light'
+                  - if self_or_admin?
+                    =link_to 'Edit', edit_user_computer_path(@user, computer), class: 'btn btn-sm btn-primary text-light'
+                    =link_to 'Delete', user_computer_path(@user, computer), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-sm btn-danger text-light'
+      .text-center= link_to "More Computer Info", user_computers_path(@user), class: 'btn btn-md btn-secondary text-light'
+      %hr
+  .col-lg-6.col-xs-12
+    - if @test_instances.empty?
+      .alert.alert-warning.align-middle
+        %h4= "#{@user.name} has not yet run any tests"
+    - else
+      %h3= "Latest results from #{@user.name}"
+      %table.table.table-hover.table-sm.table-responsive
+        %thead.thead-default
+          %tr
+            %th Version
+            %th Date Uploaded
+            %th Test Case
+            %th Computer
+          %tbody
+            - @test_instances.each do |instance|
+              %tr{class: @test_instance_classes[instance] + ' clickable-row', 'data-href': test_case_test_instance_path(instance.test_case, instance)}
+                %td=instance.mesa_version
+                %td=instance.created_at.utc.strftime "%Y-%m-%d"
+                %td
+                  %samp=instance.test_case.name
+                %td=instance.computer.name
+    -# .text-center
+    -#   = link_to "All tests from #{@user.name}", user_test_instances_path(@user), class: 'btn btn-lg btn-secondary text-light'

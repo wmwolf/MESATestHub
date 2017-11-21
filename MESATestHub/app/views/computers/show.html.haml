@@ -22,12 +22,12 @@
     .text-center
       .btn-group
         - if self_or_admin?
-          = link_to 'Edit', edit_user_computer_path(@user, @computer), class: 'btn btn-lg btn-primary text-light'
-        = link_to "View #{self? ? 'My' : @user.name + "'s"} Computers", user_computers_path(@user), class: 'btn btn-lg btn-secondary text-light'
+          = link_to 'Edit', edit_user_computer_path(@user, @computer), class: 'btn btn-md btn-primary text-light'
+        = link_to "View #{self? ? 'My' : @user.name + "'s"} Computers", user_computers_path(@user), class: 'btn btn-md btn-secondary text-light'
         - if self_or_admin?
-          = link_to 'Delete', [@user, @computer], method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-lg text-light'
+          = link_to 'Delete', [@user, @computer], method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-md text-light'
   .col-lg-6.col-xs-12
-    - if @latest_instances.empty?
+    - if @test_instances.empty?
       .alert.alert-warning.align-middle
         %h4 No tests have been run yet
     - else
@@ -39,10 +39,10 @@
             %th Test Case
             %th Runtime [s]
           %tbody
-            - @latest_instances.each do |instance|
+            - @test_instances.each do |instance|
               %tr{class: @test_instance_classes[instance] + ' clickable-row', 'data-href': test_case_test_instance_path(instance.test_case, instance)}
-                %td=instance.created_at
+                %td=instance.created_at.utc.strftime "%Y-%m-%d"
                 %td=instance.test_case.name
                 %td=instance.runtime_seconds 
-    .text-center
-      = link_to "All tests from #{@computer.name}", user_computer_test_instances_path(@user, @computer), class: 'btn btn-lg btn-secondary text-light'
+      .text-center
+        = link_to "All tests from #{@computer.name}", user_computer_test_instances_path(@user, @computer), class: 'btn btn-md btn-secondary text-light'

@@ -32,13 +32,11 @@ class ComputersController < ApplicationController
   # GET /computers/1
   # GET /computers/1.json
   def show
-    @computer_instances = @computer.test_instances.limit(20)
-    @latest_version = @computer_instances.maximum(:mesa_version)
-    @latest_instances = @computer_instances.where(
-      mesa_version: @latest_version
-    ).order(created_at: :desc)
+    @test_instances = @computer.test_instances.order(
+      mesa_version: :desc, created_at: :desc
+    ).limit(20)
     @test_instance_classes = {}
-    @latest_instances.each do |instance|
+    @test_instances.each do |instance|
       @test_instance_classes[instance] =
         if instance.passed
           'table-success'
@@ -62,8 +60,9 @@ class ComputersController < ApplicationController
   # POST /computers.json
   def create
     @computer = Computer.new(computer_params)
-    unless admin? || current_user.id == computer_params[:user_id]
-      @computer.errors.add(:user_id, 'May only associate computers to ' \
+    user = User.find(params[:computer][:user_id])
+    unless admin? || (user && current_user && user.id == current_user.id)
+      @computer.errors.add(:user_id, 'must be ' \
         'yourself unless you are an admin.')
     end
 
@@ -93,12 +92,13 @@ class ComputersController < ApplicationController
   # PATCH/PUT /computers/1.json
   def update
     respond_to do |format|
-      if computer_params[:user_id]
+      if params[:computer][:user_id]
         # only allow setting the computer's user to the logged in user unless
         # it's an admin. Skip the process if a user_id wasn't specified.
-        unless admin? || current_user.id == computer_params[:user_id]
-          @computer.errors.add(:user_id, 'May only associate computers to ' \
-            'yourself unless you are an admin.')
+        user = User.find(params[:computer][:user_id])
+        unless admin? || (user && current_user && user.id == current_user.id)
+          @computer.errors.add(:user_id, 'must be yourself unless you are ' \
+                                         'an admin.')
         end
       end
 
