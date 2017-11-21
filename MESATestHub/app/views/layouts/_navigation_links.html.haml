@@ -11,7 +11,7 @@
             Tests
             %i.fa.fa-chevron-down
           %div.dropdown-menu{ "aria-labelledby" => "dropdown01"}
-            %a.dropdown-item{ href: test_cases_path }
+            %a.dropdown-item{ href: test_cases_path(version: 'all') }
               %strong All
             -@all_test_cases.each do |test_case|
               %a.dropdown-item{ :href => test_case_path(test_case) }
@@ -31,7 +31,7 @@
           %li.nav.nav-item
             %span.nav.navbar-text{style: "margin-right: 10px;"}
               Logged in as
-              =current_user.name
+              =link_to current_user.name, user_path(current_user), class: 'text-light'
           %li.nav.nav-item
             %a{href: logout_path}
               %button.nav-item.btn.btn-outline-danger Log Out

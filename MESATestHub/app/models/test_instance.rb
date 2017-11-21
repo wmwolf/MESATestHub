@@ -1,5 +1,4 @@
 class TestInstance < ApplicationRecord
-
   @@success_types =  {
     'run_test_string' => 'Test String',
     'run_checksum' => 'Run Checksum',
@@ -15,38 +14,50 @@ class TestInstance < ApplicationRecord
     'photo_diff' => 'Photo Diff'
   }
 
-  @@compilers = %w{gfortran ifort SDK}
+  @@compilers = %w[gfortran ifort SDK]
 
   belongs_to :computer
   belongs_to :test_case
   has_many :test_data, dependent: :destroy
   validates_presence_of :runtime_seconds, :mesa_version, :computer_id,
-    :test_case_id
+                        :test_case_id
   # validates_inclusion_of :passed, in: [true, false]
   validates_inclusion_of :success_type, in: @@success_types.keys,
-    allow_blank: true
+                                        allow_blank: true
   validates_inclusion_of :failure_type, in: @@failure_types.keys,
-    allow_blank: true
+                                        allow_blank: true
   validates_inclusion_of :compiler, in: @@compilers, allow_blank: true
 
-  def self.success_types; @@success_types; end
+  def self.success_types
+    @@success_types
+  end
 
-  def self.failure_types; @@failure_types; end
+  def self.failure_types
+    @@failure_types
+  end
 
-  def self.compilers; @@compilers; end
+  def self.compilers
+    @@compilers
+  end
+
+  # descending list of all mesa versions
+  def self.versions
+    select(:mesa_version).distinct.map(&:mesa_version).sort.reverse
+  end
 
   def data(name)
     test_data.where(name: name).order(updated_at: :desc).first.value
   end
 
   def set_data(name, new_val)
-    test_data.where(name: name).order(updated_at: :desc).first.value = new_value
+    test_data.where(name: name).order(updated_at: :desc).first.value = new_val
   end
 
   def set_computer_name(user, new_computer_name)
     new_computer = user.computers.where(name: new_computer_name).first
     if new_computer.nil?
-      errors.add :computer_id, "Could not find computer with name \"#{new_computer_name}\"."
+      errors.add :computer_id, 'Could not find computer with name ' \
+        "\"#{new_computer_name}\"."
     else
       self.computer = new_computer
     end

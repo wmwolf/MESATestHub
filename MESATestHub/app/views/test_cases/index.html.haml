@@ -1,6 +1,15 @@
 .row.text-center
   .col
-    %h1 Welcome to MESA Test Hub!
+    %h1= @header_text
+
+%form{action: test_cases_path, method: 'get', class: 'form-inline'}
+  .form-row
+    .col-auto.form-group
+      =label_tag "version", 'MESA version: ', class: 'form-control-lg'
+      =select_tag "version", options_for_select(@mesa_versions, @selected), class: 'custom-select form-control-lg'
+    .form-group
+      =submit_tag 'Go', class: 'btn btn-primary text-light', name: nil
+
 
 .row#index-desc
   .col

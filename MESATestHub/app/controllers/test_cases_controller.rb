@@ -6,8 +6,24 @@ class TestCasesController < ApplicationController
   # GET /test_cases
   # GET /test_cases.json
   def index
-    set_all_test_cases
-    @test_cases = @all_test_cases
+    @mesa_versions = TestCase.versions
+    this_version = params[:version] || 'latest'
+    @mesa_versions.prepend('all')
+    @mesa_versions.prepend('latest')
+    @test_cases = TestCase.find_by_version(this_version)
+    @selected = case this_version
+                when 'all' then 'all'
+                when 'latest' then 'latest'
+                else
+                  this_version
+                end
+    @header_text = case this_version
+                   when 'all' then 'All Tests for All Versions'
+                   when 'latest'
+                     "Test Cases Tested on Version #{TestCase.versions.max}"
+                   else
+                     "Test Cases Tested on Version #{@version_number}"
+                   end
     @row_classes = {}
     @test_cases.each do |t|
       @row_classes[t] =

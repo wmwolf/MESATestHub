@@ -5,34 +5,56 @@ class TestCase < ApplicationRecord
   validates_presence_of :name
   validates_uniqueness_of :name
 
-  validates_inclusion_of :datum_1_type, in: ['integer', 'float', 'string', 'boolean'], allow_blank: true
-  validates_inclusion_of :datum_2_type, in: ['integer', 'float', 'string', 'boolean'], allow_blank: true
-  validates_inclusion_of :datum_3_type, in: ['integer', 'float', 'string', 'boolean'], allow_blank: true
-  validates_inclusion_of :datum_4_type, in: ['integer', 'float', 'string', 'boolean'], allow_blank: true
-  validates_inclusion_of :datum_5_type, in: ['integer', 'float', 'string', 'boolean'], allow_blank: true
-  validates_inclusion_of :datum_6_type, in: ['integer', 'float', 'string', 'boolean'], allow_blank: true
-  validates_inclusion_of :datum_7_type, in: ['integer', 'float', 'string', 'boolean'], allow_blank: true
-  validates_inclusion_of :datum_8_type, in: ['integer', 'float', 'string', 'boolean'], allow_blank: true
-  validates_inclusion_of :datum_9_type, in: ['integer', 'float', 'string', 'boolean'], allow_blank: true
-  validates_inclusion_of :datum_10_type, in: ['integer', 'float', 'string', 'boolean'], allow_blank: true
+  validates_inclusion_of :datum_1_type, in: %w[integer float string boolean],
+                                        allow_blank: true
+  validates_inclusion_of :datum_2_type, in: %w[integer float string boolean],
+                                        allow_blank: true
+  validates_inclusion_of :datum_3_type, in: %w[integer float string boolean],
+                                        allow_blank: true
+  validates_inclusion_of :datum_4_type, in: %w[integer float string boolean],
+                                        allow_blank: true
+  validates_inclusion_of :datum_5_type, in: %w[integer float string boolean],
+                                        allow_blank: true
+  validates_inclusion_of :datum_6_type, in: %w[integer float string boolean],
+                                        allow_blank: true
+  validates_inclusion_of :datum_7_type, in: %w[integer float string boolean],
+                                        allow_blank: true
+  validates_inclusion_of :datum_8_type, in: %w[integer float string boolean],
+                                        allow_blank: true
+  validates_inclusion_of :datum_9_type, in: %w[integer float string boolean],
+                                        allow_blank: true
+  validates_inclusion_of :datum_10_type, in: %w[integer float string boolean],
+                                         allow_blank: true
 
-
-  def TestCase.modules
-    ['star', 'binary']
+  def self.modules
+    %w[star binary]
   end
+
   validates_inclusion_of :module, in: TestCase.modules, allow_blank: true
+
+  def self.versions
+    TestInstance.versions
+  end
+
+  def self.find_by_version(version = 'all')
+    return TestCase.all if version == 'all'
+    search_version = version == 'latest' ? versions.max : version
+    TestCase.all.select do |test_case|
+      test_case.test_instances.where(mesa_version: search_version).count > 0
+    end
+  end
 
   # this is ugly and hard-codey, but what're ya gonna do?
   def data_names
     [datum_1_name, datum_2_name, datum_3_name, datum_4_name,
-     datum_5_name, datum_6_name, datum_7_name, datum_8_name, datum_9_name, 
-     datum_10_name].reject { |name| name.nil? or name.strip.empty? }
+     datum_5_name, datum_6_name, datum_7_name, datum_8_name, datum_9_name,
+     datum_10_name].reject { |name| name.nil? || name.strip.empty? }
   end
 
   def data_types
     [datum_1_type, datum_2_type, datum_3_type, datum_4_type,
-     datum_5_type, datum_6_type, datum_7_type, datum_8_type, datum_9_type, 
-     datum_10_type].reject { |type| type.nil? or type.strip.empty? }
+     datum_5_type, datum_6_type, datum_7_type, datum_8_type, datum_9_type,
+     datum_10_type].reject { |type| type.nil? || type.strip.empty? }
   end
 
   # assumes the user put in matching data names and types (i.e. datum_1_name
