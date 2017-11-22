@@ -8,22 +8,35 @@ class TestCasesController < ApplicationController
   def index
     @mesa_versions = TestCase.versions
     @selected = params[:version] || 'latest'
-    @mesa_versions.prepend('all')
-    @mesa_versions.prepend('latest')
+    # big daddy query, hopefully optimized
     @test_cases = TestCase.find_by_version(@selected)
     @version_number = case @selected
                       when 'all' then :all
-                      when 'latest' then TestCase.versions.max
+                      when 'latest' then @mesa_versions.max
                       else
-                        @selected
+                        @selected.to_i
                       end
     @header_text = case @selected
                    when 'all' then 'All Tests for All Versions'
                    else
                      "Test Cases Tested on Version #{@version_number}"
                    end
+    # for populating version select menu
+    @mesa_versions.prepend('all')
+    @mesa_versions.prepend('latest')
+
+    # set up colored table rows depending on passage status
+    @computer_counts = {}
+    @last_versions = {}
     @row_classes = {}
+    @last_tested = {}
     @test_cases.each do |t|
+      if @selected == 'all'
+        @last_versions[t] = t.last_version
+      else
+        @computer_counts[t] = t.version_computers_count(@version_number)
+      end
+      @last_tested[t] = t.last_tested
       @row_classes[t] =
         case t.version_status(@version_number)
         when 0 then 'table-success'
@@ -38,9 +51,7 @@ class TestCasesController < ApplicationController
   # GET /test_cases/1.json
   def show
     # all test instances, sorted by upload date
-    @test_instances = @test_case.test_instances.where(
-      mesa_version: @test_case.last_version
-    ).order(created_at: :desc).limit(20)
+    @test_instances = @test_case.version_instances(@test_case.last_version)
     @test_instance_classes = {}
     @test_instances.each do |instance|
       @test_instance_classes[instance] =

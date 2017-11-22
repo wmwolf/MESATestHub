@@ -39,9 +39,15 @@ class TestCase < ApplicationRecord
   def self.find_by_version(version = 'all')
     return TestCase.all if version == 'all'
     search_version = version == 'latest' ? versions.max : version
-    TestCase.all.select do |test_case|
-      test_case.test_instances.where(mesa_version: search_version).count > 0
-    end
+    # TestInstance is indexed on mesa version, so we get those in constant
+    # time, then back out unique Test Cases. This is usually used to get
+    # data for index, so eagerly load instances to get at status without
+    # hitting database for a ton more queries
+    TestCase.includes(:test_instances).find(
+      TestInstance.where(
+        mesa_version: search_version
+      ).pluck(:test_case_id).uniq
+    ).sort { |a, b| (a.name <=> b.name) }
   end
 
   # this is ugly and hard-codey, but what're ya gonna do?
@@ -66,7 +72,8 @@ class TestCase < ApplicationRecord
   end
 
   def last_tested
-    test_instances.maximum(:created_at)
+    return test_instances.maximum(:created_at) unless test_instances.loaded?
+    test_instances.map(&:created_at).max
   end
 
   alias last_tested_date last_tested
@@ -77,29 +84,49 @@ class TestCase < ApplicationRecord
   end
 
   def version_instances(version)
-    return TestCase.all.order(name: :desc) if version == :all
-    test_instances.where(mesa_version: version).order(created_at: :desc)
+    return test_instances if version == :all
+    # hit the database directly if needed
+    unless test_instances.loaded?
+      return test_instances.where(mesa_version: version)
+                           .order(created_at: :desc)
+    end
+    # instances already loaded? avoid hitting the database
+    test_instances.select { |t| t.mesa_version == version }
+                  .sort do |a, b|
+                    -(a.created_at <=> b.created_at)
+                  end
   end
 
   def version_status(version)
     return last_version_status if version == :all
     these_instances = version_instances(version)
     return 3 if these_instances.empty?
-    passing = these_instances.where(passed: true)
-    failing = these_instances.where(passed: false)
-    if failing.count > 0
-      passing.count > 0 ? 2 : 1
+    passing_count = 0
+    failing_count = 0
+    if test_instances.loaded?
+      passing_count = these_instances.select(&:passed).length
+      failing_count = these_instances.reject(&:passed).length
     else
-      return 0
+      passing_count = these_instances.where(passed: true).count
+      failing_count = these_instances.where(passed: false).count
     end
+    # success by default if we have at least one instance and no failures
+    return 0 unless failing_count > 0
+    # at least one failing, if also one passing, send back 2 (mixed). Otherwise
+    # send back 1 (failing)
+    passing_count > 0 ? 2 : 1
   end
 
   def version_computers_count(version)
-    version_instances(version).pluck(:computer_id).uniq.count
+    unless test_instances.loaded?
+      return version_instances(version).pluck(:computer_id).uniq.length
+    end
+    version_instances(version).map(&:computer_id).uniq.length
   end
 
   def last_version
-    test_instances.maximum(:mesa_version)
+    return test_instances.maximum(:mesa_version) unless test_instances.loaded?
+    test_instances.map(&:mesa_version).max
   end
 
   def last_version_status

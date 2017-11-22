@@ -49,10 +49,10 @@
             %td
               %samp= test_case.name
             - if @selected == 'all'
-              %td= test_case.last_version
+              %td= @last_versions[test_case]
             - else
-              %td= test_case.version_computers_count(@version_number)
-            %td= test_case.last_tested
+              %td= @computer_counts[test_case]
+            %td= @last_tested[test_case]
 .row
   .col.text-center
     - if admin?

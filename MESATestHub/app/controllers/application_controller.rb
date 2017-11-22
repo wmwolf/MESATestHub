@@ -45,8 +45,12 @@ class ApplicationController < ActionController::Base
   end
 
   # so that the menubar in every page can access the test case inventory
+  # this should probably be generalized to use TestCase.modules rather
+  # than having hard-coded modules...
+  # TODO: rely on TestCase.modules
   def set_all_test_cases
-    @all_test_cases ||= TestCase.where(module: :star).order(name: :asc) +
-                        TestCase.where(module: :binary).order(name: :asc)
+    @all_test_cases ||=
+      TestCase.where(module: :star).order(name: :asc) +
+      TestCase.where(module: :binary).order(name: :asc)
   end
 end
