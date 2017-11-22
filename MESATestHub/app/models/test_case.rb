@@ -62,18 +62,40 @@ class TestCase < ApplicationRecord
   # should be handled by a validation
   def data_type(data_name)
     return nil unless data_names.include? data_name
-    return Hash[data_names.zip data_types][data_name]
+    Hash[data_names.zip data_types][data_name]
   end
 
   def last_tested
     test_instances.maximum(:created_at)
   end
 
-  alias :last_tested_date :last_tested
+  alias last_tested_date last_tested
 
   def last_test_status
     return 3 if test_instances.empty?
     test_instances.where(created_at: last_tested_date).first.passed ? 0 : 1
+  end
+
+  def version_instances(version)
+    return TestCase.all.order(name: :desc) if version == :all
+    test_instances.where(mesa_version: version).order(created_at: :desc)
+  end
+
+  def version_status(version)
+    return last_version_status if version == :all
+    these_instances = version_instances(version)
+    return 3 if these_instances.empty?
+    failing = these_instances.where(passed: true)
+    passing = these_instances.where(passed: false)
+    if failing.count > 0
+      passing.count > 0 ? 2 : 1
+    else
+      return 0
+    end
+  end
+
+  def version_computers_count(version)
+    version_instances(version).pluck(:computer_id).uniq.count
   end
 
   def last_version
@@ -81,15 +103,6 @@ class TestCase < ApplicationRecord
   end
 
   def last_version_status
-    return 3 if test_instances.empty?
-    failing = test_instances.where(mesa_version: last_version, passed: false)
-    passing = test_instances.where(mesa_version: last_version, passed: true)
-    if failing.count > 0
-      # both counts > 1, mixed (2). Only failing > 1, failing (1)
-      passing.count > 0 ? 2 : 1
-    else
-      # passing status
-      return 0
-    end
+    version_status(last_version)
   end
 end

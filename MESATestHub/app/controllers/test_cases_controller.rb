@@ -7,27 +7,25 @@ class TestCasesController < ApplicationController
   # GET /test_cases.json
   def index
     @mesa_versions = TestCase.versions
-    this_version = params[:version] || 'latest'
+    @selected = params[:version] || 'latest'
     @mesa_versions.prepend('all')
     @mesa_versions.prepend('latest')
-    @test_cases = TestCase.find_by_version(this_version)
-    @selected = case this_version
-                when 'all' then 'all'
-                when 'latest' then 'latest'
-                else
-                  this_version
-                end
-    @header_text = case this_version
+    @test_cases = TestCase.find_by_version(@selected)
+    @version_number = case @selected
+                      when 'all' then :all
+                      when 'latest' then TestCase.versions.max
+                      else
+                        @selected
+                      end
+    @header_text = case @selected
                    when 'all' then 'All Tests for All Versions'
-                   when 'latest'
-                     "Test Cases Tested on Version #{TestCase.versions.max}"
                    else
                      "Test Cases Tested on Version #{@version_number}"
                    end
     @row_classes = {}
     @test_cases.each do |t|
       @row_classes[t] =
-        case t.last_version_status
+        case t.version_status(@version_number)
         when 0 then 'table-success'
         when 1 then 'table-danger'
         else

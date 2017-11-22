@@ -42,7 +42,7 @@ class TestInstance < ApplicationRecord
 
   # descending list of all mesa versions
   def self.versions
-    select(:mesa_version).distinct.map(&:mesa_version).sort.reverse
+    distinct.pluck(:mesa_version).sort.reverse
   end
 
   def data(name)

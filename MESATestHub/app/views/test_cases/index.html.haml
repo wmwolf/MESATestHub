@@ -36,7 +36,10 @@
       %thead.thead-default
         %tr
           %th Name
-          %th Last Version Tested
+          - if @selected == 'all'
+            %th Last Version Tested
+          - else
+            %th Computers Tested
           %th Last Tested Date
 
       %tbody
@@ -44,7 +47,10 @@
           %tr{class: @row_classes[test_case] + ' clickable-row', "data-href":test_case_path(test_case), id: test_case.name + '-row'}
             %td
               %samp= test_case.name
-            %td= test_case.last_version
+            - if @selected == 'all'
+              %td= test_case.last_version
+            - else
+              %td= test_case.version_computers_count(@version_number)
             %td= test_case.last_tested
 .row
   .col.text-center
