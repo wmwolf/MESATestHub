@@ -66,10 +66,19 @@ class TestInstance < ApplicationRecord
   def set_test_case_name(new_test_case_name)
     new_test_case = TestCase.where(name: new_test_case_name).first
     if new_test_case.nil?
-      errors.add :test_case_id, "Could not find test case with name \"#{new_test_case_name}\"."
-    else
-      self.test_case = new_test_case
+      # no test case found, so just make one up
+      # this test case will have NO EXTRA DATA ASSOCIATED WITH IT
+      # at time of this edit (November 22, 2017), the data features is not in
+      # use, but this may need to be revisited
+      new_test_case = TestCase.create(
+        name: new_test_case_name, version_added: mesa_version
+      )
+      # old behavior: scuttle the saving process
+      # errors.add :test_case_id,
+      #            'Could not find test case with name "' + new_test_case_name +
+      #            '".'
     end
+    self.test_case = new_test_case
   end
 
   # full text for passage status

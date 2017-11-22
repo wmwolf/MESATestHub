@@ -38,62 +38,13 @@ class TestInstancesController < ApplicationController
   # POST /test_instances/submit
   # POST /test_instances/submit.json
   def submit
-    # first thing: authenticate the user
-
-    # If logged on to website, we're good
-    user = current_user
-    authenticated = !user.nil?
-
-    # If not logged on, or submitting via JSON post (likely), check params
-    unless authenticated
-      user = User.find_by(email: params[:email])
-      authenticated = user && user.authenticate(params[:password])
-    end
-
-    # params authentication failed. Redirect (html) or report failure (JSON)
-    if !authenticated
-      respond_to do |format|
-        format.html do
-          redirect_to login_url,
-                      alert: 'Must be signed in to submit a test instance.'
-        end
-        format.json do
-          render json: { error: 'Invalid e-mail or password.' },
-                 status: :unprocessable_entity
-        end
-      end
-
     # we are authenticated from params or session
+    if submission_authenticated?
+      @test_instance = submission_instance
+      submission_save
+    # params authentication failed. Redirect (html) or report failure (JSON)
     else
-      # find the appropriate test_case and computer
-      @test_instance = TestInstance.new(submission_instance_params)
-      @test_instance.set_test_case_name(params[:test_case])
-      @test_instance.set_computer_name(user, params[:computer])
-
-      respond_to do |format|
-        if @test_instance.save
-          @test_case = @test_instance.test_case
-          data_params.each do |data_name, data_val|
-            datum = @test_instance.test_data.build(name: data_name)
-            datum.value = data_val
-            datum.save!
-          end
-          format.html do
-            redirect_to test_case_test_instances_url(@test_case),
-                        notice: 'Test instance was successfully created.'
-          end
-          format.json do
-            render :show, status: :created, location:
-              test_case_test_instance_path(@test_case, @test_instance)
-          end
-        else
-          format.html { render :new }
-          format.json do
-            render json: @test_instance.errors,
-                   status: :unprocessable_entity
-          end
-        end
-      end
+      submission_fail_authentication
     end
   end
 
@@ -152,6 +103,82 @@ class TestInstancesController < ApplicationController
   end
 
   private
+
+  # the following methods are helper (read: shorter) methods used as part of
+  # the "submit" controller action meant to streamline that definition
+  def submission_authenticated?
+    # If logged on to website, we're good
+    @user = current_user
+    authenticated = !@user.nil?
+
+    # If not logged on, or submitting via JSON post (likely), check params
+    unless authenticated
+      @user = User.find_by(email: params[:email])
+      authenticated = @user && @user.authenticate(params[:password])
+    end
+
+    authenticated
+  end
+
+  def submission_instance
+    instance = TestInstance.new(submission_instance_params)
+    # find the appropriate test_case and computer
+    instance.set_test_case_name(params[:test_case])
+    instance.set_computer_name(@user, params[:computer])
+    instance
+  end
+
+  def submission_fail_authenticate
+    respond_to do |format|
+      format.html do
+        redirect_to login_url,
+                    alert: 'Must be signed in to submit a test instance.'
+      end
+      format.json do
+        render json: { error: 'Invalid e-mail or password.' },
+               status: :unprocessable_entity
+      end
+    end
+  end
+
+  def submission_set_data
+    data_params.each do |data_name, data_val|
+      datum = @test_instance.test_data.build(name: data_name)
+      datum.value = data_val
+      datum.save!
+    end
+  end
+
+  def submission_save
+    respond_to do |format|
+      if @test_instance.save
+        submission_successful_save(format)
+      else
+        submission_fail_save(format)
+      end
+    end
+  end
+
+  def submission_fail_save(format)
+    format.html { render :new }
+    format.json do
+      render json: @test_instance.errors,
+             status: :unprocessable_entity
+    end
+  end
+
+  def submission_successful_save(format)
+    @test_case = @test_instance.test_case
+    submission_set_data
+    format.html do
+      redirect_to test_case_test_instances_url(@test_case),
+                  notice: 'Test instance was successfully created.'
+    end
+    format.json do
+      render :show, status: :created, location:
+        test_case_test_instance_path(@test_case, @test_instance)
+    end
+  end
 
   # Use callbacks to share common setup or constraints between actions.
   def set_test_instance
