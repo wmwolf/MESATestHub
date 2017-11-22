@@ -85,8 +85,8 @@ class TestCase < ApplicationRecord
     return last_version_status if version == :all
     these_instances = version_instances(version)
     return 3 if these_instances.empty?
-    failing = these_instances.where(passed: true)
-    passing = these_instances.where(passed: false)
+    passing = these_instances.where(passed: true)
+    failing = these_instances.where(passed: false)
     if failing.count > 0
       passing.count > 0 ? 2 : 1
     else
