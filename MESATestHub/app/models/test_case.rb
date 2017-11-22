@@ -37,7 +37,7 @@ class TestCase < ApplicationRecord
   end
 
   def self.find_by_version(version = 'all')
-    return TestCase.all if version == 'all'
+    return TestCase.all.order(:name) if version == 'all'
     search_version = version == 'latest' ? versions.max : version
     # TestInstance is indexed on mesa version, so we get those in constant
     # time, then back out unique Test Cases. This is usually used to get
