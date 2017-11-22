@@ -63,7 +63,7 @@ class TestInstance < ApplicationRecord
     end
   end
 
-  def set_test_case_name(new_test_case_name)
+  def set_test_case_name(new_test_case_name, mod)
     new_test_case = TestCase.where(name: new_test_case_name).first
     if new_test_case.nil?
       # no test case found, so just make one up
@@ -71,7 +71,7 @@ class TestInstance < ApplicationRecord
       # at time of this edit (November 22, 2017), the data features is not in
       # use, but this may need to be revisited
       new_test_case = TestCase.create(
-        name: new_test_case_name, version_added: mesa_version
+        name: new_test_case_name, version_added: mesa_version, module: mod
       )
       # old behavior: scuttle the saving process
       # errors.add :test_case_id,

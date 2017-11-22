@@ -123,12 +123,16 @@ class TestInstancesController < ApplicationController
   def submission_instance
     instance = TestInstance.new(submission_instance_params)
     # find the appropriate test_case and computer
-    instance.set_test_case_name(params[:test_case])
+    # note that if the test case is not found, it is created and the
+    # appropriate module is set. The module parameter is ignored for existing
+    # test cases
+    instance.set_test_case_name(params[:test_case], params[:mod])
     instance.set_computer_name(@user, params[:computer])
     instance
   end
 
   def submission_fail_authenticate
+    # what to do when authentication during a submit fails
     respond_to do |format|
       format.html do
         redirect_to login_url,
@@ -142,6 +146,8 @@ class TestInstancesController < ApplicationController
   end
 
   def submission_set_data
+    # set each datum during a submission; currently irrelevant since the
+    # mesa_test gem doesn't know how to submit extra data
     data_params.each do |data_name, data_val|
       datum = @test_instance.test_data.build(name: data_name)
       datum.value = data_val
@@ -150,6 +156,8 @@ class TestInstancesController < ApplicationController
   end
 
   def submission_save
+    # attempt to save submitted test instance and punt to a different method
+    # depending on the outcome
     respond_to do |format|
       if @test_instance.save
         submission_successful_save(format)
@@ -160,6 +168,7 @@ class TestInstancesController < ApplicationController
   end
 
   def submission_fail_save(format)
+    # what to do when saving a submitted test instance fails
     format.html { render :new }
     format.json do
       render json: @test_instance.errors,
@@ -168,6 +177,7 @@ class TestInstancesController < ApplicationController
   end
 
   def submission_successful_save(format)
+    # what to do when saving a submitted test instance is successful
     @test_case = @test_instance.test_case
     submission_set_data
     format.html do
@@ -183,7 +193,6 @@ class TestInstancesController < ApplicationController
   # Use callbacks to share common setup or constraints between actions.
   def set_test_instance
     @test_instance = @test_case.test_instances.find(params[:id])
-    # @test_instance = TestInstance.find(params[:id])
   end
 
   def set_test_case
@@ -200,9 +209,10 @@ class TestInstancesController < ApplicationController
   # these are params used in submission that are NOT used for creating the
   # instance itself. :test_case and :computer are used for discerning foreign
   # keys, but do not go into the actual build command. The data names are
-  # used for creating asscoicated test_data objects.
+  # used for creating asscoicated test_data objects. :mod is the module of the
+  # test and is only used if making a new test case out of nowhere.
   def submission_bonus_keys
-    [:email, :password, :test_case, :computer,
+    [:email, :password, :test_case, :mod, :computer,
      *@test_case.data_names.map(&:to_sym)]
   end
 
