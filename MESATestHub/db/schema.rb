@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171106163749) do
+ActiveRecord::Schema.define(version: 20171122195328) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -23,6 +23,7 @@ ActiveRecord::Schema.define(version: 20171106163749) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id"
+    t.index ["name"], name: "index_computers_on_name", unique: true
     t.index ["user_id"], name: "index_computers_on_user_id"
   end
 
@@ -53,6 +54,7 @@ ActiveRecord::Schema.define(version: 20171106163749) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "module"
+    t.index ["name"], name: "index_test_cases_on_name", unique: true
   end
 
   create_table "test_data", force: :cascade do |t|
@@ -82,6 +84,7 @@ ActiveRecord::Schema.define(version: 20171106163749) do
     t.string "success_type"
     t.string "failure_type"
     t.index ["computer_id"], name: "index_test_instances_on_computer_id"
+    t.index ["mesa_version"], name: "index_test_instances_on_mesa_version"
     t.index ["test_case_id"], name: "index_test_instances_on_test_case_id"
   end
 
@@ -92,6 +95,7 @@ ActiveRecord::Schema.define(version: 20171106163749) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "name"
+    t.index ["email"], name: "index_users_on_email", unique: true
   end
 
   add_foreign_key "test_data", "test_instances"
