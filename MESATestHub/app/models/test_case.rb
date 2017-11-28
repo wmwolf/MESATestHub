@@ -36,9 +36,9 @@ class TestCase < ApplicationRecord
     TestInstance.versions
   end
 
-  def self.find_by_version(version = 'all')
-    return TestCase.all.order(:name) if version == 'all'
-    search_version = version == 'latest' ? versions.max : version
+  def self.find_by_version(version = :all)
+    return TestCase.all.order(:name) if version.to_s.to_sym == :all
+    search_version = version == :latest ? versions.max : version
     # TestInstance is indexed on mesa version, so we get those in constant
     # time, then back out unique Test Cases. This is usually used to get
     # data for index, so eagerly load instances to get at status without
@@ -48,6 +48,18 @@ class TestCase < ApplicationRecord
         mesa_version: search_version
       ).pluck(:test_case_id).uniq
     ).sort { |a, b| (a.name <=> b.name) }
+  end
+
+  def self.version_statistics(version = :all)
+    stats = { passing: 0, mixed: 0, failing: 0 }
+    find_by_version(version).each do |test_case|
+      case test_case.version_status(version)
+      when 0 then stats[:passing] += 1
+      when 1 then stats[:failing] += 1
+      when 2 then stats[:mixed] += 1
+      end
+    end
+    stats
   end
 
   # this is ugly and hard-codey, but what're ya gonna do?

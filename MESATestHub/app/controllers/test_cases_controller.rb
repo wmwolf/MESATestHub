@@ -7,20 +7,53 @@ class TestCasesController < ApplicationController
   # GET /test_cases.json
   def index
     @mesa_versions = TestCase.versions
-    @selected = params[:version] || 'latest'
+    @selected = params[:version] || 'all'
     # big daddy query, hopefully optimized
-    @test_cases = TestCase.find_by_version(@selected)
     @version_number = case @selected
                       when 'all' then :all
                       when 'latest' then @mesa_versions.max
                       else
                         @selected.to_i
                       end
+    @test_cases = TestCase.find_by_version(@version_number)
     @header_text = case @selected
-                   when 'all' then 'All Tests for All Versions'
+                   when 'all' then 'Last Results for All Tests'
                    else
                      "Test Cases Tested on Version #{@version_number}"
                    end
+    @statistics = TestCase.version_statistics(@version_number)
+    @version_status =
+      if @statistics[:mixed] > 0
+        :mixed
+      elsif @statistics[:failing] > 0
+        if @statistics[:passing] > 0
+          :mixed
+        else
+          :failing
+        end
+      elsif @statistics[:passing] > 0
+        :passing
+      else
+        :untested
+      end
+
+    @status_text = case @version_status
+                   when :passing then 'All tests passing on all computers.'
+                   when :mixed
+                     'Some tests fail on at least some computers.'
+                   when :failing then 'All tests fail with all computers.'
+                   else
+                     'No tests have been run for this version.'
+                   end
+
+    @status_class = case @version_status
+                    when :passing then 'text-success'
+                    when :mixed then 'text-warning'
+                    when :failing then 'text-danger'
+                    else
+                      'text-info'
+                    end
+
     # for populating version select menu
     @mesa_versions.prepend('all')
     @mesa_versions.prepend('latest')

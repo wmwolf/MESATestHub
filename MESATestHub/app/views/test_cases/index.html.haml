@@ -1,6 +1,7 @@
 .row.text-center
   .col
     %h1= @header_text
+    %h3{class: @status_class}= @status_text
 
 %form{action: test_cases_path, method: 'get', class: 'form-inline'}
   .row.align-items-center
@@ -19,17 +20,20 @@
         .card-body.text-success
           %h4.card-title Passing
           %p.card-text
-            All testers report passing on most recent version
+            %b=@statistics[:passing]
+            tests where all computers report passing.
       .card.border-warning
         .card-body.text-warning
           %h3.card-title Mixed
           %p.card-text
-            At least one tester reports failing on most recent version or test not run yet.
+            %b=@statistics[:mixed]
+            tests where some computers report passing and others report failing.
       .card.border-danger
         .card-body.text-danger
           %h3.card-title Failing
           %p.card-text
-            All testers report failing on most recent version
+            %b=@statistics[:failing]
+            tests where all computers report failing.
 
 .row
   .col
