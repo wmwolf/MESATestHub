@@ -10,6 +10,8 @@
       %thead.thead-default
         %tr
           %th Name
+          - if @show_users
+            %th User
           %th Platform
           %th Processor
           %th Ram [GB]
@@ -22,6 +24,8 @@
         - @computers.each do |computer|
           %tr
             %td.align-middle= computer.name
+            - if @show_users
+              %td= link_to computer.user.name, user_computer_path(computer.user, computer)
             %td.align-middle.align-middle= computer.platform
             %td.align-middle= computer.processor
             %td.align-middle= computer.ram_gb

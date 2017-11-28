@@ -18,7 +18,8 @@ class ComputersController < ApplicationController
 
   def index_all
     @owner_prefix = 'All'
-    @computers = Computer.all
+    @show_users = true
+    @computers = Computer.all.includes(:user)
     # @computers.sort_by { |c| c.user.name }
     render 'index'
   end

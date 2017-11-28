@@ -19,12 +19,13 @@
           -if current_user
             %li.nav-item
               %a.nav-link{ :href => user_computers_path(current_user) } My Computers
-          -if current_user
             %li.nav-item
               %a.nav-link{ :href => users_path } Users
           - if admin?
             %li.nav-item
               %a.nav-link{ :href => admin_path } Admin
+            %li.nav-item
+              %a.nav-link{ :href => all_computers_path } All Computers
 
       %ul.nav.navbar-nav.navbar-right
         - if current_user
