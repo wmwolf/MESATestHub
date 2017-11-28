@@ -4,7 +4,16 @@
   .col-lg-6.col-xs12
     %h3
       %samp=@test_case.name + ':'
-      %span{class:@last_version_class}=@last_version_status
+      %span{class: @version_class}=@version_status
+    %form{action: test_case_path(@test_case), method: 'get', class: 'form-inline'}
+      .row.align-items-center
+        .col-auto.col-form-label.align-middle
+          =label_tag "version", 'MESA version: ', class: 'control-label form-control-lg'
+        .col-auto.align-middle
+          =select_tag "version", options_for_select(@mesa_versions, @selected), class: 'custom-select form-control form-control-lg'
+        .col-auto.align-middle
+          =submit_tag 'Go', class: 'btn btn-primary text-light form-control', name: nil
+
     %table.table
       %tr
         %th{scope: 'row'} Module
@@ -17,7 +26,7 @@
         %th{scope: 'row'}
           %samp MESA
           Version
-        %td=@test_case.last_version
+        %td=@version_number
       %tr
         %th{scope: 'row'} Values Tracked
         %td= @test_case.data_names.join(", ")
@@ -28,13 +37,13 @@
       .btn-group{style: 'margin-bottom: 20px'}
         - if admin?
           = link_to 'Edit', edit_test_case_path(@test_case), class: 'btn btn-primary btn-md text-light'
-        = link_to 'View All Cases', test_cases_path, class: 'btn btn-secondary btn-md text-light'
+        = link_to 'View All Cases', test_cases_path(version: @selected), class: 'btn btn-secondary btn-md text-light'
         - if admin?
           = link_to 'Delete', @test_case, method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-md text-light'
   .col-lg-6.col-xs-12
     %h3
-      Test instances for version
-      =@test_case.last_version
+      All test instances for version
+      =@version_number
     - if not @test_instances.empty?
       %table.table.table-hover.table-sm.table-responsive#test-detail
         %thead.thead-default

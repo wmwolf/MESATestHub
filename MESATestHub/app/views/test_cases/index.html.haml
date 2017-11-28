@@ -49,7 +49,7 @@
 
       %tbody
         - @test_cases.each do |test_case|
-          %tr{class: @row_classes[test_case] + ' clickable-row', "data-href":test_case_path(test_case), id: test_case.name + '-row'}
+          %tr{class: @row_classes[test_case] + ' clickable-row', "data-href":test_case_path(test_case, version: @selected), id: test_case.name + '-row'}
             %td
               %samp= test_case.name
             - if @selected == 'all'

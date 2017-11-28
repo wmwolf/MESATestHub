@@ -83,8 +83,17 @@ class TestCasesController < ApplicationController
   # GET /test_cases/1
   # GET /test_cases/1.json
   def show
+    @selected = params[:version] || 'latest'
+    @selected = 'latest' if @selected == 'all'
+    # big daddy query, hopefully optimized
+    @mesa_versions = @test_case.mesa_versions
+    @version_number = if @selected == 'latest'
+                        @mesa_versions.max
+                      else
+                        @selected.to_i
+                      end
     # all test instances, sorted by upload date
-    @test_instances = @test_case.version_instances(@test_case.last_version)
+    @test_instances = @test_case.version_instances(@version_number)
     @test_instance_classes = {}
     @test_instances.each do |instance|
       @test_instance_classes[instance] =
@@ -96,14 +105,12 @@ class TestCasesController < ApplicationController
     end
 
     # text and class for last version test status
-    @last_version_status, @last_version_class = passing_status_and_class(
-      @test_case.last_version_status
+    @version_status, @version_class = passing_status_and_class(
+      @test_case.version_status(@version_number)
     )
 
-    # text and class for last test status
-    @last_test_status, @last_test_class = passing_status_and_class(
-      @test_case.last_test_status
-    )
+    # for populating select list
+    @mesa_versions.prepend('latest')
   end
 
   # GET /test_cases/new

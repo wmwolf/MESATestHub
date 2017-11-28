@@ -95,6 +95,10 @@ class TestCase < ApplicationRecord
     test_instances.where(created_at: last_tested_date).first.passed ? 0 : 1
   end
 
+  def mesa_versions
+    test_instances.pluck(:mesa_version).uniq.sort.reverse
+  end
+
   def version_instances(version)
     return test_instances if version == :all
     # hit the database directly if needed
