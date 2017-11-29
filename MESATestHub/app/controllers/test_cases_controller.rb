@@ -7,7 +7,7 @@ class TestCasesController < ApplicationController
   # GET /test_cases.json
   def index
     @mesa_versions = TestCase.versions
-    @selected = params[:version] || 'all'
+    @selected = params[:version] || 'latest'
     # big daddy query, hopefully optimized
     @version_number = case @selected
                       when 'all' then :all
