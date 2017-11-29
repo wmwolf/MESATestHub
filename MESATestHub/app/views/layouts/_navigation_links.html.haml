@@ -1,4 +1,4 @@
-%nav.navbar.navbar-expand-md.navbar-dark.bg-dark.navbar-static-top.justify-content-between
+%nav.navbar.navbar-dark.bg-dark.navbar-static-top.justify-content-between{class: admin? ? 'navbar-expand-lg' : 'navbar-expand-md'}
   .container
     %a.navbar-brand{ :href => root_path } MESA Test Hub
     %button.navbar-toggler{ :type => "button", "data-toggle".to_sym => "collapse", "data-target".to_sym => "#main-navbar", "aria-controls".to_sym => "main-navbar", "aria-expanded".to_sym => "false", "aria-label".to_sym => "Toggle navigation"}
@@ -42,3 +42,4 @@
               %button.nav-item.btn.btn-outline-success Log In
         -# %input.form-control.mr-sm-2{ :type => "text", :placeholder => "Search", "aria-label" => "Search"}
         -# %button.btn.btn-outline-success.my-2.my-sm-0{ :type => "submit"} Search 
+

@@ -2,15 +2,21 @@
   .col
     %h1= @header_text
     %h3{class: @status_class}= @status_text
+.row
+  .col-lg-4.col-md-5.col-xs-12
+    %h4 Computers Tested:
+    %ul
+      - @specs.each do |spec, comps|
+        %li= "#{spec}: #{comps.join(', ')}"
+  .col-lg-8.col-md-7.col-xs-12
+    %form{action: test_cases_path, method: 'get', class: 'form-inline'}
+      .col-auto.col-form-label.align-middle
+        =label_tag "version", 'MESA version: ', class: 'control-label form-control-lg'
+      .col-auto.align-middle
+        =select_tag "version", options_for_select(@mesa_versions, @selected), class: 'custom-select form-control form-control-lg'
+      .col-auto.align-middle
+        =submit_tag 'Go', class: 'btn btn-primary text-light form-control', name: nil
 
-%form{action: test_cases_path, method: 'get', class: 'form-inline'}
-  .row.align-items-center
-    .col-auto.col-form-label.align-middle
-      =label_tag "version", 'MESA version: ', class: 'control-label form-control-lg'
-    .col-auto.align-middle
-      =select_tag "version", options_for_select(@mesa_versions, @selected), class: 'custom-select form-control form-control-lg'
-    .col-auto.align-middle
-      =submit_tag 'Go', class: 'btn btn-primary text-light form-control', name: nil
 
 
 .row#index-desc

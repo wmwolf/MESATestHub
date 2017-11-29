@@ -21,7 +21,8 @@ class TestCasesController < ApplicationController
                    else
                      "Test Cases Tested on Version #{@version_number}"
                    end
-    @statistics = TestCase.version_statistics(@version_number)
+    @specs = TestCase.version_computer_specs(@test_cases, @version_number)
+    @statistics = TestCase.version_statistics(@test_cases, @version_number)
     @version_status =
       if @statistics[:mixed] > 0
         :mixed

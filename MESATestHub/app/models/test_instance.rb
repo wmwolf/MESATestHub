@@ -21,13 +21,13 @@ class TestInstance < ApplicationRecord
   belongs_to :test_case
   has_many :test_data, dependent: :destroy
   validates_presence_of :runtime_seconds, :mesa_version, :computer_id,
-                        :test_case_id
+                        :test_case_id, :compiler
   # validates_inclusion_of :passed, in: [true, false]
   validates_inclusion_of :success_type, in: @@success_types.keys,
                                         allow_blank: true
   validates_inclusion_of :failure_type, in: @@failure_types.keys,
                                         allow_blank: true
-  validates_inclusion_of :compiler, in: @@compilers, allow_blank: true
+  validates_inclusion_of :compiler, in: @@compilers
 
   def self.success_types
     @@success_types
@@ -44,6 +44,16 @@ class TestInstance < ApplicationRecord
   # descending list of all mesa versions
   def self.versions
     distinct.pluck(:mesa_version).sort.reverse
+  end
+
+  def computer_specification
+    spec = ''
+    spec += computer.platform + ' ' if computer.platform
+    spec += platform_version + ' ' if platform_version
+    spec += compiler + ' ' if compiler
+    spec += compiler_version if compiler_version
+    return 'no specificaiton' if spec.empty?
+    spec.strip
   end
 
   def data(name)

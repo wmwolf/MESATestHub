@@ -50,9 +50,9 @@ class TestCase < ApplicationRecord
     ).sort { |a, b| (a.name <=> b.name) }
   end
 
-  def self.version_statistics(version = :all)
+  def self.version_statistics(test_cases, version)
     stats = { passing: 0, mixed: 0, failing: 0 }
-    find_by_version(version).each do |test_case|
+    test_cases.each do |test_case|
       case test_case.version_status(version)
       when 0 then stats[:passing] += 1
       when 1 then stats[:failing] += 1
@@ -60,6 +60,20 @@ class TestCase < ApplicationRecord
       end
     end
     stats
+  end
+
+  def self.version_computer_specs(test_cases, version)
+    specs = {}
+    find_by_version
+    test_cases.each do |test_case|
+      test_case.version_instances(version).each do |instance|
+        spec = instance.computer_specification
+        specs[spec] = [] unless specs.include?(spec)
+        specs[spec] << instance.computer.name
+      end
+    end
+    specs.each_value(&:uniq!)
+    specs
   end
 
   # this is ugly and hard-codey, but what're ya gonna do?
