@@ -11,7 +11,8 @@ class TestInstance < ApplicationRecord
     'run_diff' => 'Run Diff',
     'photo_file' => 'Missing Photo',
     'photo_checksum' => 'Photo Checkusm',
-    'photo_diff' => 'Photo Diff'
+    'photo_diff' => 'Photo Diff',
+    'compliation' => 'Compilation'
   }
 
   @@compilers = %w[gfortran ifort SDK]
