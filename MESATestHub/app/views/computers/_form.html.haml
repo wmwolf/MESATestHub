@@ -15,7 +15,7 @@
       -# = f.text_field :user, placeholder: "Bill Paxton"
   .form-row
     .col.field
-      = f.text_field :platform, placeholder: "macOS"
+      = f.select :platform, options_for_select(Computer.platforms, Computer.platforms)
     .col.field
       = f.text_field :processor, placeholder: "2.7 GHz 12-Core Intel Xeon E5"
     .col.field

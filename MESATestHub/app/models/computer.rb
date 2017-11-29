@@ -5,6 +5,13 @@ class Computer < ApplicationRecord
   validates_presence_of :name
   validates_uniqueness_of :name
   validates_presence_of :user_id
+  validates_presence_of :platform
+
+  def self.platforms
+    %w[macOS linux]
+  end
+
+  validates_inclusion_of :platform, in: %w[macOS linux]
 
   def user_name
     user.name
@@ -15,8 +22,7 @@ class Computer < ApplicationRecord
   end
 
   def validate_user(creator)
-    unless creator.admin? or (creator.id == user_id)
-      errors.add(:user, "must be current user unless you are an admin.")
-    end
+    return if creator.admin? || (creator.id == user_id)
+    errors.add(:user, 'must be current user unless you are an admin.')
   end
 end
