@@ -163,7 +163,9 @@ class ComputersController < ApplicationController
           format.json do
             render json: {
               valid: false,
-              message: 'Email and password are valid, computer name is not.'
+              message: 'Email and password are valid, but submitted computer '\
+                'name does not match any computer on MESATestHub. Set it up '\
+                'there first before submitting.'
             }
           end
         end
