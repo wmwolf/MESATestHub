@@ -10,7 +10,7 @@ Rails.application.routes.draw do
     resources :test_instances
   end
 
-  root to: 'test_cases#index', params: { version: 'latest' }
+  root to: 'test_cases#index' # , params: { version: 'latest' }
 
   # meant for remote HTTP requests
   post '/test_instances/submit', to: 'test_instances#submit'

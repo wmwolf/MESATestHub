@@ -76,6 +76,19 @@ class TestCase < ApplicationRecord
     specs
   end
 
+  # list of version numbers with test instances that have failed since a
+  # particular date (handled by TestInstance... unclear where this should live)
+  def failing_versions_since(date)
+    TestInstance.failing_versions_since(date)
+  end
+
+  # list of test cases with instances that failed for a particular version
+  # since a particular date (handled by TestInstance... unclear where this 
+  # should live)
+  def failing_cases_since(date, version)
+    TestInstance.failing_cases_since(date, version)
+  end
+
   # this is ugly and hard-codey, but what're ya gonna do?
   def data_names
     [datum_1_name, datum_2_name, datum_3_name, datum_4_name,

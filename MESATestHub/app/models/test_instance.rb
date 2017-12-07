@@ -46,6 +46,24 @@ class TestInstance < ApplicationRecord
     distinct.pluck(:mesa_version).sort.reverse
   end
 
+  # list of version numbers with test instances that have failed since a
+  # particular date
+  def self.failing_versions_since(date)
+    where(passed: false)
+      .where(created_at: date...Time.now)
+      .pluck(:mesa_version)
+      .uniq.sort.reverse
+  end
+
+  # list of test cases with instances that failed for a particular version
+  # since a particular date
+  def self.failing_cases_since(date, version)
+    TestCase.find(where(passed: false)
+                    .where(created_at: date...Time.now)
+                    .where(mesa_version: version)
+                    .pluck(:test_case_id)).sort_by(&:name)
+  end
+
   def computer_specification
     spec = ''
     spec += computer.platform + ' ' if computer.platform

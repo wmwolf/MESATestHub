@@ -1,0 +1,30 @@
+<p>
+  The following <samp>MESA</samp> revision(s) have had failing test cases in 
+  the last 24 hours: <%= @versions.join(', ') %>.
+</p>
+<p>
+  Below is a summary of the 
+  failing test cases. Click on a version number to see a test summary for the 
+  version. Click on a test case name to see a summary of results for that 
+  test case for that version. Visit 
+  <a clicktracking=off href=<%=@root_url%>> MESA Test Hub </a>
+  for more details.
+</p>
+<hr>
+<% @versions.each do |version| %>
+  <h3>
+    <a clicktracking=off href=<%= @version_links[version] %>>
+      <%= version %>
+    </a>
+  </h3>
+  <ul>
+    <% @cases[version].each do |test_case| %>
+      <li>
+        <samp> 
+          <a clicktracking=off href=<%= @case_links[version][test_case] %>> <%= test_case.name %>
+          </a>
+        </samp>
+      </li>
+    <% end %>
+  </ul>
+<% end %>

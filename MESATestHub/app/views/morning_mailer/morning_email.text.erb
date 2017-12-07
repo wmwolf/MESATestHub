@@ -1,0 +1,13 @@
+The following version(s) have had failing test cases in the last 24 hours:
+<%= @versions.join(', ') %>.
+
+Below is a summary of the failing test cases. Visit <%= @root_url %> for 
+more details.
+
+<% @versions.each do |version| %>
+<%= version %>
+==============================
+<% @cases[version].each do |test_case| %>
+- <%= test_case.name %>
+<% end %>
+<% end %>
