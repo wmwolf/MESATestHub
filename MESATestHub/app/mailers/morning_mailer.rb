@@ -39,8 +39,8 @@ class MorningMailer < ApplicationMailer
     # gather sender, recipient(s), subject, and body before composing email
     from = Email.new(email: 'noreply@testhub.mesastar.org',
                      name: 'MESA Test Hub')
-    # to = Email.new(email: 'mesa-developers@lists.mesastar.org')
-    to = Email.new(email: 'wmwolf@asu.edu', name: 'Bill Wolf')
+    to = Email.new(email: 'mesa-developers@lists.mesastar.org')
+    # to = Email.new(email: 'wmwolf@asu.edu', name: 'Bill Wolf')
     subject = "Failing tests in revision #{@versions.max}"
     subject += ' and others' if @versions.length > 1
     html_content = ApplicationController.render(
