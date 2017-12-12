@@ -78,12 +78,19 @@ class TestCase < ApplicationRecord
 
   # list of version numbers with test instances that have failed since a
   # particular date (handled by TestInstance... unclear where this should live)
-  def failing_versions_since(date)
+  def self.failing_versions_since(date)
     TestInstance.failing_versions_since(date)
   end
 
+  # list of version numbers with test instances that have passed since (with
+  # none failing) a particular date (handled by TestInstance... unclear where
+  # this should live)
+  def self.passing_versions_since(date)
+    TestInstance.passing_versions_since(date)
+  end
+
   # list of test cases with instances that failed for a particular version
-  # since a particular date (handled by TestInstance... unclear where this 
+  # since a particular date (handled by TestInstance... unclear where this
   # should live)
   def failing_cases_since(date, version)
     TestInstance.failing_cases_since(date, version)

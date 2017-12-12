@@ -49,10 +49,17 @@ class TestInstance < ApplicationRecord
   # list of version numbers with test instances that have failed since a
   # particular date
   def self.failing_versions_since(date)
-    where(passed: false)
-      .where(created_at: date...Time.now)
-      .pluck(:mesa_version)
-      .uniq.sort.reverse
+    where(passed: false, created_at: date...Time.now)
+      .pluck(:mesa_version).uniq.sort.reverse
+  end
+
+  # list of version numbers with ONLY passing test cases
+  def self.passing_versions_since(date)
+    # all versions that have at least one passing test instance
+    passing_something = where(passed: true, created_at: date...Time.now)
+                        .pluck(:mesa_version).uniq.sort.reverse
+    # remove versions that have even one failing test
+    passing_something - failing_versions_since(date)
   end
 
   # list of test cases with instances that failed for a particular version

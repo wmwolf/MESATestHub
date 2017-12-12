@@ -1,13 +1,23 @@
-The following version(s) have had failing test cases in the last 24 hours:
-<%= @versions.join(', ') %>.
+<% unless @failing_versions.empty? %>
+The following revision(s) have had failing test cases in the last 24 hours: <%= @failing_versions.join(', ') %>.
+<% end %>
 
-Below is a summary of the failing test cases. Visit <%= @root_url %> for 
-more details.
+<% unless @passing_versions.empty? %>
+The following revision(s) have passed all test cases submitted for them in the last 24 hours: <%= @passing_versions.join(', ') %>.
+<% end %>
 
-<% @versions.each do |version| %>
+<% if @passing_versions.empty? && @failing_versions.empty? %>
+No tests were run in the last 24 hours. This e-mail serves to let you know that everything is running fine. Visit <%=@root_url%> for more details.
+<% elsif !@failing_versions.empty? %>
+Below is a summary of the failing test cases. Visit <%= @root_url %> for more details.
+
+<% @failing_versions.each do |version| %>
 <%= version %>
 ==============================
 <% @cases[version].each do |test_case| %>
 - <%= test_case.name %>
 <% end %>
+<% end %>
+<% else %>
+Visit <%= @root_url %> for more details.
 <% end %>

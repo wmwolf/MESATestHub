@@ -18,21 +18,24 @@ class MorningMailer < ApplicationMailer
   def morning_email
     # first gather data from database; bail if there are no failure in the last
     # 24 hours
-    @versions = TestInstance.failing_versions_since(1.day.ago)
-    return if @versions.empty?
+    start_date = 1.day.ago
+    @failing_versions = TestInstance.failing_versions_since(start_date)
+    @passing_versions = TestInstance.passing_versions_since(start_date)
     @cases = {}
-    @versions.each do |version|
-      @cases[version] = TestInstance.failing_cases_since(1.day.ago, version)
-    end
-    # ornery links from SendGrid... doing this the hard way
-    @version_links = {}
-    @case_links = {}
-    @cases.each do |version, cases|
-      @version_links[version] = test_cases_url(version: version)
-      @case_links[version] = {}
-      cases.each do |test_case|
-        @case_links[version][test_case] =
-          test_case_url(test_case, version: version)
+    unless @failing_versions.empty?
+      @failing_versions.each do |version|
+        @cases[version] = TestInstance.failing_cases_since(start_date, version)
+      end
+      # ornery links from SendGrid... doing this the hard way
+      @version_links = {}
+      @case_links = {}
+      @cases.each do |version, cases|
+        @version_links[version] = test_cases_url(version: version)
+        @case_links[version] = {}
+        cases.each do |test_case|
+          @case_links[version][test_case] =
+            test_case_url(test_case, version: version)
+        end
       end
     end
 
@@ -41,20 +44,32 @@ class MorningMailer < ApplicationMailer
                      name: 'MESA Test Hub')
     to = Email.new(email: 'mesa-developers@lists.mesastar.org')
     # to = Email.new(email: 'wmwolf@asu.edu', name: 'Bill Wolf')
-    subject = "Failing tests in revision #{@versions.max}"
-    subject += ' and others' if @versions.length > 1
+    subject = ''
+    # subject line shows latest failing version, if there is one
+    if !@failing_versions.empty?
+      subject = "Failing tests in revision #{@failing_versions.max}"
+      subject += ' and others' if @failing_versions.length > 1
+    # no failing tests: say how many versions have passed
+    elsif !@passing_versions.empty?
+      subject = "#{@passing_versions.length} versions with all tests passing"
+    # no tests at all... send a worthless e-mail so we know it's working
+    else
+      subject = 'No tests submitted in the last 24 hours.'
+    end
     html_content = ApplicationController.render(
       template: 'morning_mailer/morning_email.html.erb',
       layout: 'mailer',
-      assigns: { versions: @versions, cases: @cases, host: @host,
-                 root_url: root_url, version_links: @version_links,
+      assigns: { failing_versions: @failing_versions,
+                 passing_versions: @passing_versions, cases: @cases,
+                 host: @host, root_url: root_url, version_links: @version_links,
                  case_links: @case_links }
     )
     text_content = ApplicationController.render(
       template: 'morning_mailer/morning_email.text.erb',
       layout: 'mailer',
-      assigns: { versions: @versions, cases: @cases, host: @host,
-                 root_url: root_url, version_links: @version_links,
+      assigns: { failing_versions: @failing_versions,
+                 passing_versions: @passing_versions, cases: @cases,
+                 host: @host, root_url: root_url, version_links: @version_links,
                  case_links: @case_links }
     )
 
